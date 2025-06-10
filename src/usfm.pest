@@ -2,35 +2,36 @@ lf = _{ "\n" | "\r" | "\n\r" }
 sp = _{ " " | "\t" }
 ws = _{ (sp | lf)* }
 nl = _{ sp* ~ lf ~ ws }
+esc = _{ ws ~ "\\" }
 
 book = { (p | pn | e | en | id | usfm | ide | sys | c | em)+ }
 
-p = { "\\" ~ p_style ~ (" " | &nl) ~ p_contents ~ nl }
-pn = { "\\" ~ pn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
-e = { "\\" ~ e_type ~ " " ~ e_contents ~ nl }
-en = { "\\"  ~ en_type ~ num ~ " " ~ e_contents ~ nl }
-id = { "\\id " ~ code ~ " " ~ e_contents ~ nl }
-usfm = { "\\usfm " ~ version ~ nl }
-ide = { "\\ide " ~ encoding ~ nl }
-sys = { "\\sys " ~ num ~ nl }
-c = { "\\c " ~ num ~ nl }
-em = { "\\" ~ em_type ~ nl }
+p = { esc ~ p_style ~ (" " | &nl) ~ p_contents ~ nl }
+pn = { esc ~ pn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
+e = { esc ~ e_type ~ " " ~ e_contents ~ nl }
+en = { esc ~ en_type ~ num ~ " " ~ e_contents ~ nl }
+id = { esc ~ "id " ~ code ~ " " ~ e_contents ~ nl }
+usfm = { esc ~ "usfm " ~ version ~ nl }
+ide = { esc ~ "ide " ~ encoding ~ nl }
+sys = { esc ~ "sys " ~ num ~ nl }
+c = { esc ~ "c " ~ num ~ nl }
+em = { esc ~ em_type ~ nl }
 
-v = { "\\v " ~ num ~ " " }
+v = { esc ~ "v " ~ num ~ " " }
 
-k = { "\\" ~ PUSH(k_style) ~ " " ~ k_contents ~ "\\" ~ POP ~ "*" }
-kn = { "\\" ~ PUSH(kn_style) ~ num ~ " " ~ k_contents ~ "\\" ~ POP ~ "*" }
-nk = { "\\" ~ PUSH("+" ~ k_style) ~ " " ~ k_contents ~ "\\" ~ POP ~ "*" }
-nkn = { "\\" ~ PUSH("+" ~ kn_style) ~ num ~ " " ~ k_contents ~ "\\" ~ POP ~ "*" }
+k = { esc ~ PUSH(k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+kn = { esc ~ PUSH(kn_style) ~ num ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+nk = { esc ~ PUSH("+" ~ k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+nkn = { esc ~ PUSH("+" ~ kn_style) ~ num ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
 
-f = { "\\" ~ PUSH(f_style) ~ " " ~ caller ~ " " ~ ("\\fr " ~ ref ~ " ")? ~ f_contents ~ "\\" ~ POP ~ "*" }
-x = { "\\" ~ PUSH(x_style) ~ " " ~ caller ~ " " ~ ("\\xo " ~ ref ~ " ")? ~ x_contents ~ "\\" ~ POP ~ "*" }
+f = { esc ~ PUSH(f_style) ~ " " ~ caller ~ " " ~ (esc ~ "fr " ~ ref ~ " ")? ~ f_contents ~ esc ~ POP ~ "*" }
+x = { esc ~ PUSH(x_style) ~ " " ~ caller ~ " " ~ (esc ~ "xo " ~ ref ~ " ")? ~ x_contents ~ esc ~ POP ~ "*" }
 
-p_style = { "p" | "m" | "pr" | "pmo" | "pm" | "pmc" | "mi" | "pc" | "lit" }
+p_style = { "p" | "m" | "pr" | "pmo" | "pm" | "pmc" | "mi" | "nb" | "pc" | "lit" }
 pn_style = { "pi" | "ph" | "q" | "qm" }
 e_type = { "rem" | "h" | "ip" | "ipi" | "im" | "imi" | "ipq" | "imq" | "ipr" | "ib" | "iot" | "iex" | "ie" | "cl" | "cp" | "cd" | "po" | "cls" | "pmr" | "qr" | "qc" | "qa" | "qd" }
 en_type = { "toc" | "toca" | "imt" | "is" | "iq" | "ili" | "io" | "imte" | "mt" | "mte" | "ms" | "s" | "sd" }
-em_type = { "nb" | "b" | "pb" }
+em_type = { "b" | "pb" }
 
 k_style = {
     "ior" | "iqt" |  "vp" | "qs" | "qac" |
@@ -48,12 +49,12 @@ xe_style = { "xk" | "xq" | "xt" | "xta" | "xop" | "xot" | "xnt" | "xdc" | "rq" }
 p_contents = _{ (nl ~ v | unnested)+ }
 e_contents = _{ unnested+ }
 k_contents = _{ ws ~ nested+ ~ ("|" ~ attrib+)? }
-f_contents = _{ (ws ~ "\\" ~ PUSH(fe_style) ~ " " ~ ws ~ nested+ ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
-x_contents = _{ (ws ~ "\\" ~ PUSH(xe_style) ~ " " ~ ws ~ nested+ ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
+f_contents = _{ (esc ~ PUSH(fe_style) ~ " " ~ ws ~ nested+ ~ (esc ~ PEEK ~ "*")? ~ DROP)+ }
+x_contents = _{ (esc ~ PUSH(xe_style) ~ " " ~ ws ~ nested+ ~ (esc ~ PEEK ~ "*")? ~ DROP)+ }
 
 unnested = _{ k | kn | f | x | line }
 nested = _{ nk | nkn | line }
-line = { (!("\\" | nl ~ "\\" | "|" | nl ~ EOI) ~ ANY)+ }
+line = { (!(esc | "|" | nl ~ EOI) ~ ANY)+ }
 attrib = { name ~ "=\"" ~ value ~ "\"" }
 name = { ('a'..'z' | "-")+ }
 value = { (!"\"" ~ ANY)* }
@@ -64,3 +65,4 @@ caller = { "+" | "-" | "?" }
 num = { ('0'..'9')+ }
 ref = { num ~ sep ~ num }
 sep = { ANY }
+
