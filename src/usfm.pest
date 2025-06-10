@@ -37,11 +37,11 @@ fe_style = { "fq" | "fqa" | "fk" | "fl" | "fw" | "fp" | "ft" | "fdc" | "fm" }
 x_style = { "x" }
 xe_style = { "xk" | "xq" | "xt" | "xta" | "xop" | "xot" | "xnt" | "xdc" | "rq" }
 
-p_contents = { (nl ~ v | k | f | x | line)+ }
-e_contents = { (k | f | x | line)+ }
-k_contents = { ws ~ line }
-f_contents = { (ws ~ "\\" ~ PUSH(fe_style) ~ " " ~ ws ~ line ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
-x_contents = { (ws ~ "\\" ~ PUSH(xe_style) ~ " " ~ ws ~ line ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
+p_contents = _{ (nl ~ v | k | f | x | line)+ }
+e_contents = _{ (k | f | x | line)+ }
+k_contents = _{ ws ~ line }
+f_contents = _{ (ws ~ "\\" ~ PUSH(fe_style) ~ " " ~ ws ~ line ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
+x_contents = _{ (ws ~ "\\" ~ PUSH(xe_style) ~ " " ~ ws ~ line ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
 
 line = { (!("\\" | "\n\\" | nl ~ EOI) ~ ANY)+ }
 code = { 'A'..'Z'+ }
