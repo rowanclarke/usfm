@@ -5,8 +5,8 @@ nl = _{ sp* ~ lf ~ ws }
 
 book = { (p | pn | e | en | id | usfm | ide | sys | c)+ }
 
-p = { "\\" ~ p_style ~ p_contents ~ nl }
-pn = { "\\" ~ pn_style ~ num ~ p_contents ~ nl }
+p = { "\\" ~ p_style ~ (" " | &nl) ~ p_contents ~ nl }
+pn = { "\\" ~ pn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
 e = { "\\" ~ e_type ~ " " ~ e_contents ~ nl }
 en = { "\\"  ~ en_type ~ num ~ " " ~ e_contents ~ nl }
 id = { "\\id " ~ code ~ " " ~ e_contents ~ nl }
