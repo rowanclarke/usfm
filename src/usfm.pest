@@ -14,11 +14,14 @@ usfm = { "\\usfm " ~ version ~ nl }
 ide = { "\\ide " ~ encoding ~ nl }
 sys = { "\\sys " ~ num ~ nl }
 c = { "\\c " ~ num ~ nl }
-v = { "\\v " ~ num ~ " " }
 em = { "\\" ~ em_type ~ nl }
+
+v = { "\\v " ~ num ~ " " }
 
 k = { "\\" ~ PUSH(k_style) ~ " " ~ k_contents ~ "\\" ~ POP ~ "*" }
 kn = { "\\" ~ PUSH(kn_style) ~ num ~ " " ~ k_contents ~ "\\" ~ POP ~ "*" }
+nk = { "\\" ~ PUSH("+" ~ k_style) ~ " " ~ k_contents ~ "\\" ~ POP ~ "*" }
+nkn = { "\\" ~ PUSH("+" ~ kn_style) ~ num ~ " " ~ k_contents ~ "\\" ~ POP ~ "*" }
 
 f = { "\\" ~ PUSH(f_style) ~ " " ~ caller ~ " " ~ ("\\fr " ~ ref ~ " ")? ~ f_contents ~ "\\" ~ POP ~ "*" }
 x = { "\\" ~ PUSH(x_style) ~ " " ~ caller ~ " " ~ ("\\xo " ~ ref ~ " ")? ~ x_contents ~ "\\" ~ POP ~ "*" }
@@ -42,12 +45,14 @@ fe_style = { "fq" | "fqa" | "fk" | "fl" | "fw" | "fp" | "ft" | "fdc" | "fm" }
 x_style = { "x" }
 xe_style = { "xk" | "xq" | "xt" | "xta" | "xop" | "xot" | "xnt" | "xdc" | "rq" }
 
-k_contents = _{ ws ~ line ~ ("|" ~ attrib+)? }
-p_contents = _{ (nl ~ v | k | kn | f | x | line)+ }
-e_contents = _{ (k | kn | f | x | line)+ }
-f_contents = _{ (ws ~ "\\" ~ PUSH(fe_style) ~ " " ~ ws ~ line ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
-x_contents = _{ (ws ~ "\\" ~ PUSH(xe_style) ~ " " ~ ws ~ line ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
+p_contents = _{ (nl ~ v | unnested)+ }
+e_contents = _{ unnested+ }
+k_contents = _{ ws ~ nested+ ~ ("|" ~ attrib+)? }
+f_contents = _{ (ws ~ "\\" ~ PUSH(fe_style) ~ " " ~ ws ~ nested+ ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
+x_contents = _{ (ws ~ "\\" ~ PUSH(xe_style) ~ " " ~ ws ~ nested+ ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
 
+unnested = _{ k | kn | f | x | line }
+nested = _{ nk | nkn | line }
 line = { (!("\\" | nl ~ "\\" | "|" | nl ~ EOI) ~ ANY)+ }
 attrib = { name ~ "=\"" ~ value ~ "\"" }
 name = { ('a'..'z' | "-")+ }
