@@ -3,7 +3,7 @@ sp = _{ " " | "\t" }
 ws = _{ (sp | lf)* }
 nl = _{ sp* ~ lf ~ ws }
 
-book = { (p | pn | e | en | id | usfm | ide | sys | c)+ }
+book = { (p | pn | e | en | id | usfm | ide | sys | c | em)+ }
 
 p = { "\\" ~ p_style ~ (" " | &nl) ~ p_contents ~ nl }
 pn = { "\\" ~ pn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
