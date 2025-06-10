@@ -1,16 +1,21 @@
+lf = _{ "\n" | "\r" | "\n\r" }
+sp = _{ " " | "\t" }
+ws = _{ (sp | lf)* }
+nl = _{ sp* ~ lf ~ ws }
+
 book = { (p | pn | e | en | id | usfm | ide | sys | c)+ }
 
-p = { "\\" ~ p_style ~ p_contents ~ "\n" }
-pn = { "\\" ~ pn_style ~ num ~ p_contents ~ "\n" }
-e = { "\\" ~ e_type ~ " " ~ e_contents ~ "\n" }
-en = { "\\"  ~ en_type ~ num ~ " " ~ e_contents ~ "\n" }
-id = { "\\id " ~ code ~ " " ~ e_contents ~ "\n" }
-usfm = { "\\usfm " ~ version ~ "\n" }
-ide = { "\\ide " ~ encoding ~ "\n" }
-sys = { "\\sys " ~ num ~ "\n" }
-c = { "\\c " ~ num ~ "\n" }
+p = { "\\" ~ p_style ~ p_contents ~ nl }
+pn = { "\\" ~ pn_style ~ num ~ p_contents ~ nl }
+e = { "\\" ~ e_type ~ " " ~ e_contents ~ nl }
+en = { "\\"  ~ en_type ~ num ~ " " ~ e_contents ~ nl }
+id = { "\\id " ~ code ~ " " ~ e_contents ~ nl }
+usfm = { "\\usfm " ~ version ~ nl }
+ide = { "\\ide " ~ encoding ~ nl }
+sys = { "\\sys " ~ num ~ nl }
+c = { "\\c " ~ num ~ nl }
 v = { "\\v " ~ num ~ " " }
-em = { "\\" ~ em_type ~ "\n" }
+em = { "\\" ~ em_type ~ nl }
 
 k = { "\\" ~ PUSH(k_style) ~ " " ~ k_contents ~ "\\" ~ POP ~ "*" }
 kn = { "\\" ~ PUSH(kn_style) ~ num ~ " " ~ k_contents ~ "\\" ~ POP ~ "*" }
@@ -32,13 +37,13 @@ fe_style = { "fq" | "fqa" | "fk" | "fl" | "fw" | "fp" | "ft" | "fdc" | "fm" }
 x_style = { "x" }
 xe_style = { "xk" | "xq" | "xt" | "xta" | "xop" | "xot" | "xnt" | "xdc" | "rq" }
 
-p_contents = { ("\n" ~ v | k | f | x | line)+ }
+p_contents = { (nl ~ v | k | f | x | line)+ }
 e_contents = { (k | f | x | line)+ }
-k_contents = { line }
-f_contents = { ("\\" ~ PUSH(fe_style) ~ " " ~ line ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
-x_contents = { ("\\" ~ PUSH(xe_style) ~ " " ~ line ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
+k_contents = { ws ~ line }
+f_contents = { (ws ~ "\\" ~ PUSH(fe_style) ~ " " ~ ws ~ line ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
+x_contents = { (ws ~ "\\" ~ PUSH(xe_style) ~ " " ~ ws ~ line ~ ("\\" ~ PEEK ~ "*")? ~ DROP)+ }
 
-line = { (!("\\" | "\n\\" | "\n" ~ EOI) ~ ANY)+ }
+line = { (!("\\" | "\n\\" | nl ~ EOI) ~ ANY)+ }
 code = { 'A'..'Z'+ }
 encoding = { "CP-1252" | "CP-1251" | "UTF-8" | "UTF-16" }
 version = { num ~ ("." ~ num)* }
