@@ -36,7 +36,7 @@ k_style = {
     "ior" | "iqt" |  "vp" | "qs" | "qac" |
     "add" | "bk" | "dc" | "k" | "nd" | "ord" | "pn" | "png" | "addpn" | "qt" | "sig" | "sls" | "tl" | "wj" |
     "em" | "bd" | "it" | "bdit" | "no" | "sc" | "sup" |
-    "ndx" | "rb" | "pro" | "w" | "wg" | "wh" | "wa"
+    "ndx" | "rb" | "pro" | "w" | "wg" | "wh" | "wa" | "jmp"
 }
 kn_style = { "ca" | "va" }
 
