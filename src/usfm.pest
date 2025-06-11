@@ -4,7 +4,7 @@ ws = _{ (sp | lf)* }
 nl = _{ sp* ~ lf ~ ws }
 esc = _{ ws ~ "\\" }
 
-book = { (p | pn | e | en | id | usfm | ide | sys | c | em)+ }
+book = { (p | pn | e | en | id | usfm | ide | sts | c | em)+ }
 
 p = { esc ~ p_style ~ (" " | &nl) ~ p_contents ~ nl }
 pn = { esc ~ pn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
@@ -13,7 +13,7 @@ en = { esc ~ en_type ~ num ~ " " ~ e_contents ~ nl }
 id = { esc ~ "id " ~ code ~ " " ~ e_contents ~ nl }
 usfm = { esc ~ "usfm " ~ version ~ nl }
 ide = { esc ~ "ide " ~ encoding ~ nl }
-sys = { esc ~ "sys " ~ num ~ nl }
+sts = { esc ~ "sts " ~ num ~ nl }
 c = { esc ~ "c " ~ num ~ nl }
 em = { esc ~ em_type ~ nl }
 
