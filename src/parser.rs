@@ -15,52 +15,82 @@ pub fn to_book(pairs: Pairs<Rule>) -> Book {
 }
 
 pub fn to_book_contents(pair: Pair<Rule>) -> BookContents {
+    use BookContents::*;
     let rule = pair.as_rule();
     let mut pairs = pair.into_inner();
 
     match rule {
-        Rule::id => BookContents::Id {
+        Rule::id => Id {
             code: to_book_identifier(pairs.next().unwrap().as_str()),
             text: pairs.next().unwrap().to_string(),
         },
-        Rule::usfm => BookContents::Usfm(pairs.next().unwrap().to_string()),
-        Rule::encoding => BookContents::Encoding(to_book_encoding(pairs.next().unwrap().as_str())),
-        Rule::sts => BookContents::Status(to_direct(pairs.next().unwrap())),
-        Rule::c => BookContents::Chapter(to_direct(pairs.next().unwrap())),
-        Rule::ca => BookContents::AltChapter(to_direct(pairs.next().unwrap())),
-        Rule::p => BookContents::Paragraph {
+        Rule::usfm => Usfm(pairs.next().unwrap().to_string()),
+        Rule::encoding => Encoding(to_book_encoding(pairs.next().unwrap().as_str())),
+        Rule::sts => Status(to_direct(pairs.next().unwrap())),
+        Rule::c => Chapter(to_direct(pairs.next().unwrap())),
+        Rule::ca => AltChapter(to_direct(pairs.next().unwrap())),
+        Rule::p => Paragraph {
             style: to_paragraph_style(pairs.next().unwrap().as_str()),
-            contents: todo!(),
+            contents: pairs.map(to_paragraph_contents).collect(),
         },
-        Rule::pn => BookContents::Paragraph {
+        Rule::pn => Paragraph {
             style: to_numbered_paragraph_style(
                 pairs.next().unwrap().as_str(),
                 to_direct(pairs.next().unwrap()),
             ),
-            contents: todo!(),
+            contents: pairs.map(to_paragraph_contents).collect(),
         },
-        Rule::q => BookContents::Poetry {
+        Rule::q => Poetry {
             style: to_poetry_style(pairs.next().unwrap().as_str()),
-            contents: todo!(),
+            contents: pairs.map(to_paragraph_contents).collect(),
         },
 
-        Rule::qn => BookContents::Poetry {
+        Rule::qn => Poetry {
             style: to_numbered_poetry_style(
                 pairs.next().unwrap().as_str(),
                 to_direct(pairs.next().unwrap()),
             ),
-            contents: todo!(),
+            contents: pairs.map(to_paragraph_contents).collect(),
         },
-        Rule::e => BookContents::Element {
-            ty: todo!(),
-            contents: todo!(),
+        Rule::e => Element {
+            ty: to_element_type(pairs.next().unwrap().as_str()),
+            contents: pairs.map(to_element_contents).collect(),
         },
-        _ => todo!(),
+        _ => unreachable!(),
     }
 }
 
 pub fn to_direct<T: FromStr>(pair: Pair<Rule>) -> T {
     T::from_str(pair.as_str()).unwrap_or_else(|_| panic!())
+}
+
+pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
+    use ParagraphContents::*;
+    let rule = pair.as_rule();
+    if rule == Rule::line {
+        return Line(pair.to_string());
+    }
+
+    let mut pairs = pair.into_inner();
+
+    match rule {
+        Rule::v => Verse(to_direct(pairs.next().unwrap())),
+        Rule::k => Character {
+            ty: to_character_type(),
+            contents: pairs.map(to_character_contents).collect(),
+        },
+        Rule::f => todo!(),
+        Rule::x => todo!(),
+        _ => unreachable!(),
+    }
+}
+
+pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
+    todo!()
+}
+
+pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
+    todo!()
 }
 
 pub fn to_paragraph_style(s: &str) -> ParagraphStyle {
@@ -138,6 +168,18 @@ pub fn to_element_type(s: &str) -> ElementType {
         "sp" => Speaker,
         _ => unreachable!(),
     }
+}
+
+pub fn to_character_type() -> CharacterType {
+    todo!()
+}
+
+pub fn to_footnote_element_style() -> FootnoteElementStyle {
+    todo!()
+}
+
+pub fn to_cross_ref_element_style() -> CrossRefElementStyle {
+    todo!()
 }
 
 pub fn to_numbered_element_type(s: &str, n: u8) -> ElementType {
