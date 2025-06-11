@@ -8,6 +8,9 @@ book = { (p | pn | e | en | id | usfm | ide | sts | c | ca | em)+ }
 
 p = { esc ~ p_style ~ (" " | &nl) ~ p_contents ~ nl }
 pn = { esc ~ pn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
+q = { esc ~ q_style ~ (" " | &nl) ~ p_contents ~ nl }
+qn = { esc ~ qn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
+
 e = { esc ~ e_type ~ " " ~ e_contents ~ nl }
 en = { esc ~ en_type ~ num ~ " " ~ e_contents ~ nl }
 id = { esc ~ "id " ~ code ~ " " ~ e_contents ~ nl }
@@ -27,8 +30,11 @@ f = { esc ~ PUSH(f_style) ~ " " ~ caller ~ " " ~ (esc ~ "fr " ~ ref ~ " ")? ~ f_
 x = { esc ~ PUSH(x_style) ~ " " ~ caller ~ " " ~ (esc ~ "xo " ~ ref ~ " ")? ~ x_contents ~ esc ~ POP ~ "*" }
 
 p_style = { "p" | "m" | "po" | "pr" | "cls" | "pmo" | "pm" | "pmc" | "pmr" | "mi" | "nb" | "pc" | "lit" }
-pn_style = { "pi" | "ph" | "q" | "qm" }
-e_type = { "rem" | "h" | "ip" | "ipi" | "im" | "imi" | "ipq" | "imq" | "ipr" | "ib" | "iot" | "iex" | "ie" | "cl" | "cp" | "cd" | "qr" | "qc" | "qa" | "qd" }
+pn_style = { "pi" | "ph" }
+q_style = {  "qr" | "qc" | "qa" | "qd" }
+qn_style = { "q" | "qm" }
+
+e_type = { "rem" | "h" | "ip" | "ipi" | "im" | "imi" | "ipq" | "imq" | "ipr" | "ib" | "iot" | "iex" | "ie" | "cl" | "cp" | "cd" | "mr" | "sr" | "r" | "d" | "sp" }
 en_type = { "toc" | "toca" | "imt" | "is" | "iq" | "ili" | "io" | "imte" | "mt" | "mte" | "ms" | "s" | "sd" }
 em_type = { "b" | "pb" }
 
