@@ -70,17 +70,25 @@ pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
     if rule == Rule::line {
         return Line(pair.to_string());
     }
-
     let mut pairs = pair.into_inner();
-
+    let mut next = || pairs.next().unwrap();
+    let mut next_str = || next().as_str();
     match rule {
-        Rule::v => Verse(to_direct(pairs.next().unwrap())),
+        Rule::v => Verse(to_direct(next())),
         Rule::k => Character {
-            ty: to_character_type(),
+            ty: to_character_type(next_str()),
             contents: pairs.map(to_character_contents).collect(),
         },
-        Rule::f => todo!(),
-        Rule::x => todo!(),
+        Rule::f => Footnote {
+            style: to_footnote_style(next_str()),
+            caller: to_caller(next_str()),
+            elements: pairs.map(to_footnote_element).collect(),
+        },
+        Rule::x => CrossRef {
+            style: to_cross_ref_style(next_str()),
+            caller: to_caller(next_str()),
+            elements: pairs.map(to_cross_ref_element).collect(),
+        },
         _ => unreachable!(),
     }
 }
@@ -91,6 +99,23 @@ pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
 
 pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
     todo!()
+}
+
+pub fn to_footnote_element(pair: Pair<Rule>) -> FootnoteElement {
+    todo!()
+}
+
+pub fn to_cross_ref_element(pair: Pair<Rule>) -> CrossRefElement {
+    todo!()
+}
+
+pub fn to_caller(s: &str) -> Caller {
+    use Caller::*;
+    match s {
+        "+" => Auto,
+        "-" => None,
+        _ => Some(s.chars().next().unwrap()),
+    }
 }
 
 pub fn to_paragraph_style(s: &str) -> ParagraphStyle {
@@ -170,15 +195,23 @@ pub fn to_element_type(s: &str) -> ElementType {
     }
 }
 
-pub fn to_character_type() -> CharacterType {
+pub fn to_character_type(s: &str) -> CharacterType {
     todo!()
 }
 
-pub fn to_footnote_element_style() -> FootnoteElementStyle {
+pub fn to_footnote_style(s: &str) -> FootnoteStyle {
     todo!()
 }
 
-pub fn to_cross_ref_element_style() -> CrossRefElementStyle {
+pub fn to_cross_ref_style(s: &str) -> CrossRefStyle {
+    todo!()
+}
+
+pub fn to_footnote_element_style(s: &str) -> FootnoteElementStyle {
+    todo!()
+}
+
+pub fn to_cross_ref_element_style(s: &str) -> CrossRefElementStyle {
     todo!()
 }
 
