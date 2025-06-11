@@ -1,13 +1,17 @@
-struct Book {
-    contents: Vec<BookContents>,
+pub struct Book {
+    pub contents: Vec<BookContents>,
 }
 
-enum BookContents {
-    Id(),
-    Usfm(),
-    Encoding(),
-    Status(),
-    Chapter(),
+pub enum BookContents {
+    Id {
+        code: BookIdentifier,
+        text: String,
+    },
+    Usfm(String),
+    Encoding(BookEncoding),
+    Status(u16),
+    Chapter(u16),
+    AltChapter(u16),
     Paragraph {
         style: ParagraphStyle,
         contents: Vec<ParagraphContents>,
@@ -22,8 +26,8 @@ enum BookContents {
     },
 }
 
-enum ParagraphContents {
-    Verse(),
+pub enum ParagraphContents {
+    Verse(u16),
     Line(String),
     Character {
         ty: CharacterType,
@@ -38,7 +42,7 @@ enum ParagraphContents {
     },
 }
 
-enum ElementContents {
+pub enum ElementContents {
     Line(String),
     Character {
         ty: CharacterType,
@@ -53,7 +57,7 @@ enum ElementContents {
     },
 }
 
-enum CharacterContents {
+pub enum CharacterContents {
     Line(String),
     Character {
         ty: CharacterType,
@@ -61,17 +65,17 @@ enum CharacterContents {
     },
 }
 
-struct FootnoteElement {
+pub struct FootnoteElement {
     style: FootnoteElementStyle,
     contents: CharacterContents,
 }
 
-struct CrossRefElement {
+pub struct CrossRefElement {
     style: CrossRefElementStyle,
     contents: CharacterContents,
 }
 
-enum FootnoteElementStyle {
+pub enum FootnoteElementStyle {
     TranslationQuote,
     AltTranslationQuote,
     Keyword,
@@ -83,7 +87,7 @@ enum FootnoteElementStyle {
     Reference,
 }
 
-enum CrossRefElementStyle {
+pub enum CrossRefElementStyle {
     Keyword,
     Quote,
     Target,
@@ -95,7 +99,7 @@ enum CrossRefElementStyle {
     InlineQuote,
 }
 
-enum CharacterType {
+pub enum CharacterType {
     IntroOutline,
     IntroQuote,
     InlineQuote,
@@ -136,12 +140,12 @@ enum CharacterType {
     Link,
 }
 
-enum FootnoteStyle {
+pub enum FootnoteStyle {
     Footnote,
     Endnote,
 }
 
-enum ParagraphStyle {
+pub enum ParagraphStyle {
     Normal,
     Margin,
     Opening,
@@ -157,9 +161,10 @@ enum ParagraphStyle {
     Centered,
     HangingIndented(u8),
     Blank,
+    LiturgicalNote,
 }
 
-enum PoetryStyle {
+pub enum PoetryStyle {
     Normal(u8),
     Right,
     Centered,
@@ -169,7 +174,34 @@ enum PoetryStyle {
     Blank,
 }
 
-enum ElementType {
+pub enum ElementType {
+    Remark,
+    Header,
+    Contents(u8),
+    AltContents(u8),
+
+    MajorIntro(u8),
+    SectionIntro(u8),
+    Intro,
+    IndentedIntro,
+    MarginIntro,
+    MarginIndentedIntro,
+    QuotedIntro,
+    MarginQuotedIntro,
+    RightIntro,
+    PoetryIntro(u8),
+    BlankIntro,
+    ListIntro(u8),
+    OutlineIntro,
+    EntryIntro(u8),
+    BridgeIntro,
+    MajorTitleEndingIntro(u8),
+    EndIntro,
+
+    ChapterLabel,
+    ChapterPublishedLabel,
+    ChapterDescription,
+
     MajorTitle(u8),
     MajorTitleEnding(u8),
     MajorSection(u8),
@@ -177,9 +209,138 @@ enum ElementType {
     Section(u8),
     Reference,
     Parallel,
-    Inline,
+    // Inline,
     Descriptive,
     Speaker,
     Division(u8),
     PageBreak,
+}
+
+pub enum BookIdentifier {
+    Genesis,
+    Exodus,
+    Leviticus,
+    Numbers,
+    Deuteronomy,
+    Joshua,
+    Judges,
+    Ruth,
+    OneSamuel,
+    TwoSamuel,
+    OneKings,
+    TwoKings,
+    OneChronicles,
+    TwoChronicles,
+    Ezra,
+    Nehemiah,
+    Esther,
+    Job,
+    Psalms,
+    Proverbs,
+    Ecclesiastes,
+    SongOfSongs,
+    Isaiah,
+    Jeremiah,
+    Lamentations,
+    Ezekiel,
+    Daniel,
+    Hosea,
+    Joel,
+    Amos,
+    Obadiah,
+    Jonah,
+    Micah,
+    Nahum,
+    Habakkuk,
+    Zephaniah,
+    Haggai,
+    Zechariah,
+    Malachi,
+    Matthew,
+    Mark,
+    Luke,
+    John,
+    Acts,
+    Romans,
+    OneCorinthians,
+    TwoCorinthians,
+    Galatians,
+    Ephesians,
+    Philippians,
+    Colossians,
+    OneThessalonians,
+    TwoThessalonians,
+    OneTimothy,
+    TwoTimothy,
+    Titus,
+    Philemon,
+    Hebrews,
+    James,
+    OnePeter,
+    TwoPeter,
+    OneJohn,
+    TwoJohn,
+    ThreeJohn,
+    Jude,
+    Revelation,
+
+    Tobit,
+    Judith,
+    EstherGreek,
+    WisdomOfSolomon,
+    Sirach,
+    Baruch,
+    LetterOfJeremiah,
+    SongOfThreeYoungMen,
+    Susanna,
+    BelAndTheDragon,
+    OneMaccabees,
+    TwoMaccabees,
+    ThreeMaccabees,
+    FourMaccabees,
+    OneEsdras,
+    TwoEsdras,
+    PrayerOfManasseh,
+    Psalm151,
+    Odes,
+    PsalmsOfSolomon,
+
+    EzraApocalypse,
+    FiveEzra,
+    SixEzra,
+    DanielGreek,
+    Psalms152To155,
+    TwoBaruch,
+    LetterOfBaruch,
+    Jubilees,
+    Enoch,
+    OneMeqabyan,
+    TwoMeqabyan,
+    ThreeMeqabyan,
+    Reproof,
+    FourBaruch,
+    LetterToLaodiceans,
+
+    FrontMatter,
+    BackMatter,
+    OtherMatter,
+    IntroductionMatter,
+    Concordance,
+    Glossary,
+    TopicalIndex,
+    NamesIndex,
+    ExtraA,
+    ExtraB,
+    ExtraC,
+    ExtraD,
+    ExtraE,
+    ExtraF,
+    ExtraG,
+}
+
+pub enum BookEncoding {
+    CP1252,
+    CP1251,
+    UTF8,
+    UTF16,
 }
