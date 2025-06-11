@@ -94,27 +94,68 @@ pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
 }
 
 pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
-    todo!()
+    use ElementContents::*;
+    let rule = pair.as_rule();
+    if rule == Rule::line {
+        return Line(pair.to_string());
+    }
+    let mut pairs = pair.into_inner();
+    let mut next = || pairs.next().unwrap();
+    let mut next_str = || next().as_str();
+    match rule {
+        Rule::k => Character {
+            ty: to_character_type(next_str()),
+            contents: pairs.map(to_character_contents).collect(),
+        },
+        Rule::f => Footnote {
+            style: to_footnote_style(next_str()),
+            caller: to_caller(next_str()),
+            elements: pairs.map(to_footnote_element).collect(),
+        },
+        Rule::x => CrossRef {
+            style: to_cross_ref_style(next_str()),
+            caller: to_caller(next_str()),
+            elements: pairs.map(to_cross_ref_element).collect(),
+        },
+        _ => unreachable!(),
+    }
 }
 
 pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
-    todo!()
+    use CharacterContents::*;
+    let rule = pair.as_rule();
+    if rule == Rule::line {
+        return Line(pair.to_string());
+    }
+    let mut pairs = pair.into_inner();
+    let mut next = || pairs.next().unwrap();
+    let mut next_str = || next().as_str();
+    match rule {
+        Rule::k => Character {
+            ty: to_character_type(next_str()),
+            contents: pairs.map(to_character_contents).collect(),
+        },
+        _ => unreachable!(),
+    }
 }
 
 pub fn to_footnote_element(pair: Pair<Rule>) -> FootnoteElement {
-    todo!()
+    let mut pairs = pair.into_inner();
+    let mut next = || pairs.next().unwrap();
+    let mut next_str = || next().as_str();
+    FootnoteElement {
+        style: to_footnote_element_style(next_str()),
+        contents: pairs.map(to_character_contents).collect(),
+    }
 }
 
 pub fn to_cross_ref_element(pair: Pair<Rule>) -> CrossRefElement {
-    todo!()
-}
-
-pub fn to_caller(s: &str) -> Caller {
-    use Caller::*;
-    match s {
-        "+" => Auto,
-        "-" => None,
-        _ => Some(s.chars().next().unwrap()),
+    let mut pairs = pair.into_inner();
+    let mut next = || pairs.next().unwrap();
+    let mut next_str = || next().as_str();
+    CrossRefElement {
+        style: to_cross_ref_element_style(next_str()),
+        contents: pairs.map(to_character_contents).collect(),
     }
 }
 
@@ -196,22 +237,96 @@ pub fn to_element_type(s: &str) -> ElementType {
 }
 
 pub fn to_character_type(s: &str) -> CharacterType {
+    use CharacterType::*;
+    match s {
+        "ior" => (),
+        "iqt" => (),
+        "rq" => (),
+        "vp" => (),
+        "qs" => (),
+        "qac" => (),
+        "add" => (),
+        "bk" => (),
+        "dc" => (),
+        "k" => (),
+        "nd" => (),
+        "ord" => (),
+        "pn" => (),
+        "png" => (),
+        "addpn" => (),
+        "qt" => (),
+        "sig" => (),
+        "sls" => (),
+        "tl" => (),
+        "wj" => (),
+        "em" => (),
+        "bd" => (),
+        "it" => (),
+        "bdit" => (),
+        "no" => (),
+        "sc" => (),
+        "sup" => (),
+        "ndx" => (),
+        "rb" => (),
+        "pro" => (),
+        "w" => (),
+        "wg" => (),
+        "wh" => (),
+        "wa" => (),
+        "jmp" => (),
+        _ => unreachable!(),
+    }
     todo!()
 }
 
 pub fn to_footnote_style(s: &str) -> FootnoteStyle {
-    todo!()
+    use FootnoteStyle::*;
+    match s {
+        "f" => Footnote,
+        "fe" => Endnote,
+        _ => unreachable!(),
+    }
 }
 
 pub fn to_cross_ref_style(s: &str) -> CrossRefStyle {
-    todo!()
+    use CrossRefStyle::*;
+    match s {
+        "x" => CrossRef,
+        _ => unreachable!(),
+    }
 }
 
 pub fn to_footnote_element_style(s: &str) -> FootnoteElementStyle {
+    use FootnoteElementStyle::*;
+    match s {
+        "fq" => (),
+        "fqa" => (),
+        "fk" => (),
+        "fl" => (),
+        "fw" => (),
+        "fp" => (),
+        "ft" => (),
+        "fdc" => (),
+        "fm" => (),
+        _ => unreachable!(),
+    }
     todo!()
 }
 
 pub fn to_cross_ref_element_style(s: &str) -> CrossRefElementStyle {
+    use CrossRefElementStyle::*;
+    match s {
+        "xk" => (),
+        "xq" => (),
+        "xt" => (),
+        "xta" => (),
+        "xop" => (),
+        "xot" => (),
+        "xnt" => (),
+        "xdc" => (),
+        "rq" => (),
+        _ => unreachable!(),
+    }
     todo!()
 }
 
@@ -232,6 +347,15 @@ pub fn to_numbered_element_type(s: &str, n: u8) -> ElementType {
         "s" => Section(n),
         "sd" => Division(n),
         _ => unreachable!(),
+    }
+}
+
+pub fn to_caller(s: &str) -> Caller {
+    use Caller::*;
+    match s {
+        "+" => Auto,
+        "-" => None,
+        _ => Some(s.chars().next().unwrap()),
     }
 }
 
