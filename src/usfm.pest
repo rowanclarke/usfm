@@ -58,7 +58,7 @@ line = { (!(esc | "|" | nl ~ EOI) ~ ANY)+ }
 attrib = { name ~ "=\"" ~ value ~ "\"" }
 name = { ('a'..'z' | "-")+ }
 value = { (!"\"" ~ ANY)* }
-code = { 'A'..'Z'+ }
+code = { ('A'..'Z' | '0'..'9')+ }
 encoding = { "CP-1252" | "CP-1251" | "UTF-8" | "UTF-16" }
 version = { num ~ ("." ~ num)* }
 caller = { "+" | "-" | "?" } 
