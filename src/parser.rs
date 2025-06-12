@@ -1,8 +1,25 @@
-use std::str::FromStr;
+use std::{net::AddrParseError, str::FromStr};
 
 use crate::usfm::*;
 use pest::iterators::{Pair, Pairs};
 use pest_derive::Parser;
+
+pub fn to_direct<T: FromStr>(pair: Pair<Rule>) -> T {
+    T::from_str(pair.as_str()).unwrap_or_else(|_| panic!())
+}
+
+fn inner<'i>(
+    pair: Pair<'i, Rule>,
+) -> (
+    Pairs<'i, Rule>,
+    impl FnMut() -> Pair<'i, Rule>,
+    impl FnMut() -> &'i str,
+) {
+    let mut pairs = pair.into_inner();
+    let mut next = || pairs.next().unwrap();
+    let mut next_str = || next().as_str();
+    (pairs, next, next_str)
+}
 
 #[derive(Parser)]
 #[grammar = "usfm.pest"]
@@ -58,10 +75,6 @@ pub fn to_book_contents(pair: Pair<Rule>) -> BookContents {
         },
         _ => unreachable!(),
     }
-}
-
-pub fn to_direct<T: FromStr>(pair: Pair<Rule>) -> T {
-    T::from_str(pair.as_str()).unwrap_or_else(|_| panic!())
 }
 
 pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
@@ -239,44 +252,43 @@ pub fn to_element_type(s: &str) -> ElementType {
 pub fn to_character_type(s: &str) -> CharacterType {
     use CharacterType::*;
     match s {
-        "ior" => (),
-        "iqt" => (),
-        "rq" => (),
-        "vp" => (),
-        "qs" => (),
-        "qac" => (),
-        "add" => (),
-        "bk" => (),
-        "dc" => (),
-        "k" => (),
-        "nd" => (),
-        "ord" => (),
-        "pn" => (),
-        "png" => (),
-        "addpn" => (),
-        "qt" => (),
-        "sig" => (),
-        "sls" => (),
-        "tl" => (),
-        "wj" => (),
-        "em" => (),
-        "bd" => (),
-        "it" => (),
-        "bdit" => (),
-        "no" => (),
-        "sc" => (),
-        "sup" => (),
-        "ndx" => (),
-        "rb" => (),
-        "pro" => (),
-        "w" => (),
-        "wg" => (),
-        "wh" => (),
-        "wa" => (),
-        "jmp" => (),
+        "ior" => IntroOutline,
+        "iqt" => IntroQuote,
+        "rq" => InlineQuote,
+        "vp" => PublishedVerse,
+        "qs" => Selah,
+        "qac" => AcrosticLetter,
+        "add" => Addition,
+        "bk" => BookQuote,
+        "dc" => DeuteroAddition,
+        "k" => Keyword,
+        "nd" => Deity,
+        "ord" => Ordinal,
+        "pn" => Proper,
+        "png" => Geographic,
+        "addpn" => ProperAddition,
+        "qt" => QuotedText,
+        "sig" => Signature,
+        "sls" => SecondaryText,
+        "tl" => Transliterated,
+        "wj" => Jesus,
+        "em" => Emphasis,
+        "bd" => Bold,
+        "it" => Italic,
+        "bdit" => BoldItalic,
+        "no" => Normal,
+        "sc" => SmallCap,
+        "sup" => Superscipt,
+        "ndx" => Index,
+        "rb" => Ruby,
+        "pro" => Pronunciation,
+        "w" => Word,
+        "wg" => GreekWord,
+        "wh" => HebrewWord,
+        "wa" => AramaicWord,
+        "jmp" => Link,
         _ => unreachable!(),
     }
-    todo!()
 }
 
 pub fn to_footnote_style(s: &str) -> FootnoteStyle {
@@ -299,35 +311,33 @@ pub fn to_cross_ref_style(s: &str) -> CrossRefStyle {
 pub fn to_footnote_element_style(s: &str) -> FootnoteElementStyle {
     use FootnoteElementStyle::*;
     match s {
-        "fq" => (),
-        "fqa" => (),
-        "fk" => (),
-        "fl" => (),
-        "fw" => (),
-        "fp" => (),
-        "ft" => (),
-        "fdc" => (),
-        "fm" => (),
+        "fq" => TranslationQuote,
+        "fqa" => AltTranslationQuote,
+        "fk" => Keyword,
+        "fl" => Label,
+        "fw" => Witness,
+        "fp" => Paragraph,
+        "ft" => Text,
+        "fdc" => DeuteroText,
+        "fm" => Reference,
         _ => unreachable!(),
     }
-    todo!()
 }
 
 pub fn to_cross_ref_element_style(s: &str) -> CrossRefElementStyle {
     use CrossRefElementStyle::*;
     match s {
-        "xk" => (),
-        "xq" => (),
-        "xt" => (),
-        "xta" => (),
-        "xop" => (),
-        "xot" => (),
-        "xnt" => (),
-        "xdc" => (),
-        "rq" => (),
+        "xk" => Keyword,
+        "xq" => Quote,
+        "xt" => Target,
+        "xta" => ExtraTarget,
+        "xop" => Origin,
+        "xot" => OldTarget,
+        "xnt" => NewTarget,
+        "xdc" => DeuteroTarget,
+        "rq" => InlineQuote,
         _ => unreachable!(),
     }
-    todo!()
 }
 
 pub fn to_numbered_element_type(s: &str, n: u8) -> ElementType {
