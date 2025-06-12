@@ -4,7 +4,7 @@ ws = _{ (sp | lf)* }
 nl = _{ sp* ~ lf ~ ws }
 esc = _{ ws ~ "\\" }
 
-book = { (p | pn | e | en | id | usfm | ide | sts | c | ca | em)+ }
+book = _{ (p | pn | q | qn | e | en | id | usfm | ide | sts | c | ca | em)+ }
 
 p = { esc ~ p_style ~ (" " | &nl) ~ p_contents ~ nl }
 pn = { esc ~ pn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
@@ -26,8 +26,10 @@ v = { esc ~ "v " ~ num ~ " " }
 k = { esc ~ PUSH(k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
 nk = { esc ~ PUSH("+" ~ k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
 
-f = { esc ~ PUSH(f_style) ~ " " ~ caller ~ " " ~ (esc ~ "fr " ~ ref ~ " ")? ~ f_contents ~ esc ~ POP ~ "*" }
-x = { esc ~ PUSH(x_style) ~ " " ~ caller ~ " " ~ (esc ~ "xo " ~ ref ~ " ")? ~ x_contents ~ esc ~ POP ~ "*" }
+f = { esc ~ PUSH(f_style) ~ " " ~ caller ~ " " ~ (esc ~ "fr " ~ reference ~ " ")? ~ f_contents ~ esc ~ POP ~ "*" }
+fe = { esc ~ PUSH(fe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
+x = { esc ~ PUSH(x_style) ~ " " ~ caller ~ " " ~ (esc ~ "xo " ~ reference ~ " ")? ~ x_contents ~ esc ~ POP ~ "*" }
+xe = { esc ~ PUSH(xe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
 
 p_style = { "p" | "m" | "po" | "pr" | "cls" | "pmo" | "pm" | "pmc" | "pmr" | "mi" | "nb" | "pc" | "lit" }
 pn_style = { "pi" | "ph" }
@@ -53,8 +55,9 @@ xe_style = { "xk" | "xq" | "xt" | "xta" | "xop" | "xot" | "xnt" | "xdc" | "rq" }
 p_contents = _{ (nl ~ v | unnested)+ }
 e_contents = _{ unnested+ }
 k_contents = _{ ws ~ nested+ ~ ("|" ~ (attrib+ | value))? }
-f_contents = _{ (esc ~ PUSH(fe_style) ~ " " ~ ws ~ nested+ ~ (esc ~ PEEK ~ "*")? ~ DROP)+ }
-x_contents = _{ (esc ~ PUSH(xe_style) ~ " " ~ ws ~ nested+ ~ (esc ~ PEEK ~ "*")? ~ DROP)+ }
+f_contents = _{ fe+ }
+x_contents = _{ xe+ }
+n_contents = _{ nested+ }
 
 unnested = _{ k | f | x | line }
 nested = _{ nk | line }
@@ -67,6 +70,6 @@ encoding = { "CP-1252" | "CP-1251" | "UTF-8" | "UTF-16" }
 version = { num ~ ("." ~ num)* }
 caller = { "+" | "-" | "?" } 
 num = { ('0'..'9')+ }
-ref = { num ~ sep ~ num }
+reference = { num ~ sep ~ num }
 sep = { ANY }
 

@@ -1,7 +1,5 @@
 mod pairs;
 
-use std::{net::AddrParseError, str::FromStr};
-
 use crate::usfm::*;
 use pairs::Unpack;
 use pest::iterators::{Pair, Pairs};
@@ -28,7 +26,7 @@ pub fn to_book_contents(pair: Pair<Rule>) -> BookContents {
             text: pairs.next_str().to_string(),
         },
         Rule::usfm => Usfm(pairs.next_str().to_string()),
-        Rule::encoding => Encoding(to_book_encoding(pairs.next_str())),
+        Rule::ide => Encoding(to_book_encoding(pairs.next_str())),
         Rule::sts => Status(pairs.next_value()),
         Rule::c => Chapter(pairs.next_value()),
         Rule::ca => AltChapter(pairs.next_value()),
@@ -44,7 +42,6 @@ pub fn to_book_contents(pair: Pair<Rule>) -> BookContents {
             style: to_poetry_style(pairs.next_str()),
             contents: pairs.map(to_paragraph_contents),
         },
-
         Rule::qn => Poetry {
             style: to_numbered_poetry_style(pairs.next_str(), pairs.next_value()),
             contents: pairs.map(to_paragraph_contents),
@@ -53,7 +50,14 @@ pub fn to_book_contents(pair: Pair<Rule>) -> BookContents {
             ty: to_element_type(pairs.next_str()),
             contents: pairs.map(to_element_contents),
         },
-        _ => unreachable!(),
+        Rule::en => Element {
+            ty: to_numbered_element_type(pairs.next_str(), pairs.next_value()),
+            contents: pairs.map(to_element_contents),
+        },
+        Rule::em => Empty {
+            ty: to_empty_type(pairs.next_str()),
+        },
+        _ => panic!("Unexpected rule {:?} in to_book_contents", rule),
     }
 }
 
@@ -61,7 +65,7 @@ pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
     use ParagraphContents::*;
     let rule = pair.as_rule();
     if rule == Rule::line {
-        return Line(pair.to_string());
+        return Line(pair.as_str().to_string());
     }
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
@@ -72,15 +76,15 @@ pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
         },
         Rule::f => Footnote {
             style: to_footnote_style(pairs.next_str()),
-            caller: to_caller(pairs.next_str()),
+            caller: to_caller(pairs.next_char()),
             elements: pairs.map(to_footnote_element),
         },
         Rule::x => CrossRef {
             style: to_cross_ref_style(pairs.next_str()),
-            caller: to_caller(pairs.next_str()),
+            caller: to_caller(pairs.next_char()),
             elements: pairs.map(to_cross_ref_element),
         },
-        _ => unreachable!(),
+        _ => panic!("Unexpected rule {:?} in to_paragraph_contents", rule),
     }
 }
 
@@ -88,7 +92,7 @@ pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
     use ElementContents::*;
     let rule = pair.as_rule();
     if rule == Rule::line {
-        return Line(pair.to_string());
+        return Line(pair.as_str().to_string());
     }
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
@@ -98,15 +102,15 @@ pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
         },
         Rule::f => Footnote {
             style: to_footnote_style(pairs.next_str()),
-            caller: to_caller(pairs.next_str()),
+            caller: to_caller(pairs.next_char()),
             elements: pairs.map(to_footnote_element),
         },
         Rule::x => CrossRef {
             style: to_cross_ref_style(pairs.next_str()),
-            caller: to_caller(pairs.next_str()),
+            caller: to_caller(pairs.next_char()),
             elements: pairs.map(to_cross_ref_element),
         },
-        _ => unreachable!(),
+        _ => panic!("Unexpected rule {:?} in to_element_contents", rule),
     }
 }
 
@@ -114,7 +118,7 @@ pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
     use CharacterContents::*;
     let rule = pair.as_rule();
     if rule == Rule::line {
-        return Line(pair.to_string());
+        return Line(pair.as_str().to_string());
     }
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
@@ -122,21 +126,39 @@ pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
             ty: to_character_type(pairs.next_str()),
             contents: pairs.map(to_character_contents),
         },
-        _ => unreachable!(),
+        _ => panic!("Unexpected rule {:?} in to_character_contents", rule),
     }
 }
 
 pub fn to_footnote_element(pair: Pair<Rule>) -> FootnoteElement {
+    use FootnoteElement::*;
+    let rule = pair.as_rule();
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
-    FootnoteElement {
+    if rule == Rule::reference {
+        return Reference {
+            chapter: pairs.next_value(),
+            separator: pairs.next_char(),
+            verse: pairs.next_value(),
+        };
+    }
+    Element {
         style: to_footnote_element_style(pairs.next_str()),
         contents: pairs.map(to_character_contents),
     }
 }
 
 pub fn to_cross_ref_element(pair: Pair<Rule>) -> CrossRefElement {
+    use CrossRefElement::*;
+    let rule = pair.as_rule();
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
-    CrossRefElement {
+    if rule == Rule::reference {
+        return Reference {
+            chapter: pairs.next_value(),
+            separator: pairs.next_char(),
+            verse: pairs.next_value(),
+        };
+    }
+    Element {
         style: to_cross_ref_element_style(pairs.next_str()),
         contents: pairs.map(to_character_contents),
     }
@@ -158,7 +180,7 @@ pub fn to_paragraph_style(s: &str) -> ParagraphStyle {
         "nb" => Basic,
         "pc" => Centered,
         "lit" => LiturgicalNote,
-        _ => unreachable!(),
+        _ => panic!("Unknown paragraph style: {:?}", s),
     }
 }
 
@@ -167,7 +189,10 @@ pub fn to_numbered_paragraph_style(s: &str, n: u8) -> ParagraphStyle {
     match s {
         "pi" => Indented(n),
         "ph" => HangingIndented(n),
-        _ => unreachable!(),
+        _ => panic!(
+            "Unknown numbered paragraph style: {:?} with number {}",
+            s, n
+        ),
     }
 }
 
@@ -178,7 +203,7 @@ pub fn to_poetry_style(s: &str) -> PoetryStyle {
         "qc" => Centered,
         "qa" => AcrosticHeading,
         "qd" => Descriptive,
-        _ => unreachable!(),
+        _ => panic!("Unknown poetry style: {:?}", s),
     }
 }
 
@@ -187,7 +212,7 @@ pub fn to_numbered_poetry_style(s: &str, n: u8) -> PoetryStyle {
     match s {
         "q" => Normal(n),
         "qm" => Embedded(n),
-        _ => unreachable!(),
+        _ => panic!("Unknown numbered poetry style: {:?} with number {}", s, n),
     }
 }
 
@@ -215,7 +240,36 @@ pub fn to_element_type(s: &str) -> ElementType {
         "r" => Parallel,
         "d" => Descriptive,
         "sp" => Speaker,
-        _ => unreachable!(),
+        _ => panic!("Unknown element type: {:?}", s),
+    }
+}
+
+pub fn to_numbered_element_type(s: &str, n: u8) -> ElementType {
+    use ElementType::*;
+    match s {
+        "toc" => Contents(n),
+        "toca" => AltContents(n),
+        "imt" => MajorIntro(n),
+        "is" => SectionIntro(n),
+        "iq" => PoetryIntro(n),
+        "ili" => ListIntro(n),
+        "io" => EntryIntro(n),
+        "imte" => MajorTitleEndingIntro(n),
+        "mt" => MajorTitle(n),
+        "mte" => MajorTitleEnding(n),
+        "ms" => MajorSection(n),
+        "s" => Section(n),
+        "sd" => Division(n),
+        _ => panic!("Unknown numbered element type: {:?} with number {}", s, n),
+    }
+}
+
+pub fn to_empty_type(s: &str) -> EmptyType {
+    use EmptyType::*;
+    match s {
+        "b" => Blank,
+        "pb" => PageBreak,
+        _ => panic!("Unknown empty type: {:?}", s),
     }
 }
 
@@ -257,7 +311,7 @@ pub fn to_character_type(s: &str) -> CharacterType {
         "wh" => HebrewWord,
         "wa" => AramaicWord,
         "jmp" => Link,
-        _ => unreachable!(),
+        _ => panic!("Unknown character type: {:?}", s),
     }
 }
 
@@ -266,7 +320,7 @@ pub fn to_footnote_style(s: &str) -> FootnoteStyle {
     match s {
         "f" => Footnote,
         "fe" => Endnote,
-        _ => unreachable!(),
+        _ => panic!("Unknown footnote style: {:?}", s),
     }
 }
 
@@ -274,7 +328,7 @@ pub fn to_cross_ref_style(s: &str) -> CrossRefStyle {
     use CrossRefStyle::*;
     match s {
         "x" => CrossRef,
-        _ => unreachable!(),
+        _ => panic!("Unknown cross-reference style: {:?}", s),
     }
 }
 
@@ -289,8 +343,8 @@ pub fn to_footnote_element_style(s: &str) -> FootnoteElementStyle {
         "fp" => Paragraph,
         "ft" => Text,
         "fdc" => DeuteroText,
-        "fm" => Reference,
-        _ => unreachable!(),
+        "fm" => ReferenceMark,
+        _ => panic!("Unknown footnote element style: {:?}", s),
     }
 }
 
@@ -306,36 +360,16 @@ pub fn to_cross_ref_element_style(s: &str) -> CrossRefElementStyle {
         "xnt" => NewTarget,
         "xdc" => DeuteroTarget,
         "rq" => InlineQuote,
-        _ => unreachable!(),
+        _ => panic!("Unknown cross-reference element style: {:?}", s),
     }
 }
 
-pub fn to_numbered_element_type(s: &str, n: u8) -> ElementType {
-    use ElementType::*;
-    match s {
-        "toc" => Contents(n),
-        "toca" => AltContents(n),
-        "imt" => MajorIntro(n),
-        "is" => SectionIntro(n),
-        "iq" => PoetryIntro(n),
-        "ili" => ListIntro(n),
-        "io" => EntryIntro(n),
-        "imte" => MajorTitleEndingIntro(n),
-        "mt" => MajorTitle(n),
-        "mte" => MajorTitleEnding(n),
-        "ms" => MajorSection(n),
-        "s" => Section(n),
-        "sd" => Division(n),
-        _ => unreachable!(),
-    }
-}
-
-pub fn to_caller(s: &str) -> Caller {
+pub fn to_caller(c: char) -> Caller {
     use Caller::*;
-    match s {
-        "+" => Auto,
-        "-" => None,
-        _ => Some(s.chars().next().unwrap()),
+    match c {
+        '+' => Auto,
+        '-' => None,
+        _ => Some(c),
     }
 }
 
@@ -458,7 +492,7 @@ pub fn to_book_identifier(s: &str) -> BookIdentifier {
         "XXE" => ExtraE,
         "XXF" => ExtraF,
         "XXG" => ExtraG,
-        _ => unreachable!(),
+        _ => panic!("Unknown book identifier: {:?}", s),
     }
 }
 
@@ -469,6 +503,6 @@ fn to_book_encoding(s: &str) -> BookEncoding {
         "CP-1251" => CP1251,
         "UTF-8" => UTF8,
         "UTF-16" => UTF16,
-        _ => unreachable!(),
+        _ => panic!("Unknown encoding: {:?}", s),
     }
 }

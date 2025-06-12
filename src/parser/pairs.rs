@@ -26,6 +26,10 @@ impl<'i, R: RuleType> Unpack<'i, R> {
         self.next_str().parse().unwrap_or_else(|_| panic!())
     }
 
+    pub fn next_char(&mut self) -> char {
+        self.next_str().chars().next().unwrap()
+    }
+
     pub fn map<T, F: Fn(Pair<'i, R>) -> T>(self, f: F) -> Vec<T> {
         self.0.map(f).collect()
     }

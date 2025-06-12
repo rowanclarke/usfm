@@ -1,7 +1,9 @@
+#[derive(Debug, PartialEq, Eq)]
 pub struct Book {
     pub contents: Vec<BookContents>,
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum BookContents {
     Id {
         code: BookIdentifier,
@@ -24,8 +26,12 @@ pub enum BookContents {
         ty: ElementType,
         contents: Vec<ElementContents>,
     },
+    Empty {
+        ty: EmptyType,
+    },
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum ParagraphContents {
     Verse(u16),
     Line(String),
@@ -35,13 +41,17 @@ pub enum ParagraphContents {
     },
     Footnote {
         style: FootnoteStyle,
+        caller: Caller,
         elements: Vec<FootnoteElement>,
     },
     CrossRef {
+        style: CrossRefStyle,
+        caller: Caller,
         elements: Vec<CrossRefElement>,
     },
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum ElementContents {
     Line(String),
     Character {
@@ -50,13 +60,17 @@ pub enum ElementContents {
     },
     Footnote {
         style: FootnoteStyle,
+        caller: Caller,
         elements: Vec<FootnoteElement>,
     },
     CrossRef {
+        style: CrossRefStyle,
+        caller: Caller,
         elements: Vec<CrossRefElement>,
     },
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum CharacterContents {
     Line(String),
     Character {
@@ -65,17 +79,35 @@ pub enum CharacterContents {
     },
 }
 
-pub struct FootnoteElement {
-    style: FootnoteElementStyle,
-    contents: CharacterContents,
+#[derive(Debug, PartialEq, Eq)]
+pub enum FootnoteElement {
+    Reference {
+        chapter: u16,
+        separator: char,
+        verse: u16,
+    },
+    Element {
+        style: FootnoteElementStyle,
+        contents: Vec<CharacterContents>,
+    },
 }
 
-pub struct CrossRefElement {
-    style: CrossRefElementStyle,
-    contents: CharacterContents,
+#[derive(Debug, PartialEq, Eq)]
+pub enum CrossRefElement {
+    Reference {
+        chapter: u16,
+        separator: char,
+        verse: u16,
+    },
+    Element {
+        style: CrossRefElementStyle,
+        contents: Vec<CharacterContents>,
+    },
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum FootnoteElementStyle {
+    Reference,
     TranslationQuote,
     AltTranslationQuote,
     Keyword,
@@ -84,10 +116,12 @@ pub enum FootnoteElementStyle {
     Paragraph,
     Text,
     DeuteroText,
-    Reference,
+    ReferenceMark,
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum CrossRefElementStyle {
+    Reference,
     Keyword,
     Quote,
     Target,
@@ -99,10 +133,13 @@ pub enum CrossRefElementStyle {
     InlineQuote,
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum CharacterType {
     IntroOutline,
     IntroQuote,
     InlineQuote,
+
+    PublishedVerse,
 
     Selah,
     AcrosticLetter,
@@ -140,11 +177,18 @@ pub enum CharacterType {
     Link,
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum FootnoteStyle {
     Footnote,
     Endnote,
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub enum CrossRefStyle {
+    CrossRef,
+}
+
+#[derive(Debug, PartialEq, Eq)]
 pub enum ParagraphStyle {
     Normal,
     Margin,
@@ -160,10 +204,10 @@ pub enum ParagraphStyle {
     Basic,
     Centered,
     HangingIndented(u8),
-    Blank,
     LiturgicalNote,
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum PoetryStyle {
     Normal(u8),
     Right,
@@ -171,9 +215,9 @@ pub enum PoetryStyle {
     AcrosticHeading,
     Embedded(u8),
     Descriptive,
-    Blank,
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum ElementType {
     Remark,
     Header,
@@ -213,9 +257,22 @@ pub enum ElementType {
     Descriptive,
     Speaker,
     Division(u8),
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum EmptyType {
+    Blank,
     PageBreak,
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub enum Caller {
+    Auto,
+    None,
+    Some(char),
+}
+
+#[derive(Debug, PartialEq, Eq)]
 pub enum BookIdentifier {
     Genesis,
     Exodus,
@@ -338,6 +395,7 @@ pub enum BookIdentifier {
     ExtraG,
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum BookEncoding {
     CP1252,
     CP1251,
