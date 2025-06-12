@@ -1,25 +1,11 @@
+mod pairs;
+
 use std::{net::AddrParseError, str::FromStr};
 
 use crate::usfm::*;
+use pairs::Unpack;
 use pest::iterators::{Pair, Pairs};
 use pest_derive::Parser;
-
-pub fn to_direct<T: FromStr>(pair: Pair<Rule>) -> T {
-    T::from_str(pair.as_str()).unwrap_or_else(|_| panic!())
-}
-
-fn inner<'i>(
-    pair: Pair<'i, Rule>,
-) -> (
-    Pairs<'i, Rule>,
-    impl FnMut() -> Pair<'i, Rule>,
-    impl FnMut() -> &'i str,
-) {
-    let mut pairs = pair.into_inner();
-    let mut next = || pairs.next().unwrap();
-    let mut next_str = || next().as_str();
-    (pairs, next, next_str)
-}
 
 #[derive(Parser)]
 #[grammar = "usfm.pest"]
@@ -34,44 +20,38 @@ pub fn to_book(pairs: Pairs<Rule>) -> Book {
 pub fn to_book_contents(pair: Pair<Rule>) -> BookContents {
     use BookContents::*;
     let rule = pair.as_rule();
-    let mut pairs = pair.into_inner();
+    let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
 
     match rule {
         Rule::id => Id {
-            code: to_book_identifier(pairs.next().unwrap().as_str()),
-            text: pairs.next().unwrap().to_string(),
+            code: to_book_identifier(pairs.next_str()),
+            text: pairs.next_str().to_string(),
         },
-        Rule::usfm => Usfm(pairs.next().unwrap().to_string()),
-        Rule::encoding => Encoding(to_book_encoding(pairs.next().unwrap().as_str())),
-        Rule::sts => Status(to_direct(pairs.next().unwrap())),
-        Rule::c => Chapter(to_direct(pairs.next().unwrap())),
-        Rule::ca => AltChapter(to_direct(pairs.next().unwrap())),
+        Rule::usfm => Usfm(pairs.next_str().to_string()),
+        Rule::encoding => Encoding(to_book_encoding(pairs.next_str())),
+        Rule::sts => Status(pairs.next_value()),
+        Rule::c => Chapter(pairs.next_value()),
+        Rule::ca => AltChapter(pairs.next_value()),
         Rule::p => Paragraph {
-            style: to_paragraph_style(pairs.next().unwrap().as_str()),
-            contents: pairs.map(to_paragraph_contents).collect(),
+            style: to_paragraph_style(pairs.next_str()),
+            contents: pairs.map(to_paragraph_contents),
         },
         Rule::pn => Paragraph {
-            style: to_numbered_paragraph_style(
-                pairs.next().unwrap().as_str(),
-                to_direct(pairs.next().unwrap()),
-            ),
-            contents: pairs.map(to_paragraph_contents).collect(),
+            style: to_numbered_paragraph_style(pairs.next_str(), pairs.next_value()),
+            contents: pairs.map(to_paragraph_contents),
         },
         Rule::q => Poetry {
-            style: to_poetry_style(pairs.next().unwrap().as_str()),
-            contents: pairs.map(to_paragraph_contents).collect(),
+            style: to_poetry_style(pairs.next_str()),
+            contents: pairs.map(to_paragraph_contents),
         },
 
         Rule::qn => Poetry {
-            style: to_numbered_poetry_style(
-                pairs.next().unwrap().as_str(),
-                to_direct(pairs.next().unwrap()),
-            ),
-            contents: pairs.map(to_paragraph_contents).collect(),
+            style: to_numbered_poetry_style(pairs.next_str(), pairs.next_value()),
+            contents: pairs.map(to_paragraph_contents),
         },
         Rule::e => Element {
-            ty: to_element_type(pairs.next().unwrap().as_str()),
-            contents: pairs.map(to_element_contents).collect(),
+            ty: to_element_type(pairs.next_str()),
+            contents: pairs.map(to_element_contents),
         },
         _ => unreachable!(),
     }
@@ -83,24 +63,22 @@ pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
     if rule == Rule::line {
         return Line(pair.to_string());
     }
-    let mut pairs = pair.into_inner();
-    let mut next = || pairs.next().unwrap();
-    let mut next_str = || next().as_str();
+    let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::v => Verse(to_direct(next())),
+        Rule::v => Verse(pairs.next_value()),
         Rule::k => Character {
-            ty: to_character_type(next_str()),
-            contents: pairs.map(to_character_contents).collect(),
+            ty: to_character_type(pairs.next_str()),
+            contents: pairs.map(to_character_contents),
         },
         Rule::f => Footnote {
-            style: to_footnote_style(next_str()),
-            caller: to_caller(next_str()),
-            elements: pairs.map(to_footnote_element).collect(),
+            style: to_footnote_style(pairs.next_str()),
+            caller: to_caller(pairs.next_str()),
+            elements: pairs.map(to_footnote_element),
         },
         Rule::x => CrossRef {
-            style: to_cross_ref_style(next_str()),
-            caller: to_caller(next_str()),
-            elements: pairs.map(to_cross_ref_element).collect(),
+            style: to_cross_ref_style(pairs.next_str()),
+            caller: to_caller(pairs.next_str()),
+            elements: pairs.map(to_cross_ref_element),
         },
         _ => unreachable!(),
     }
@@ -112,23 +90,21 @@ pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
     if rule == Rule::line {
         return Line(pair.to_string());
     }
-    let mut pairs = pair.into_inner();
-    let mut next = || pairs.next().unwrap();
-    let mut next_str = || next().as_str();
+    let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
         Rule::k => Character {
-            ty: to_character_type(next_str()),
-            contents: pairs.map(to_character_contents).collect(),
+            ty: to_character_type(pairs.next_str()),
+            contents: pairs.map(to_character_contents),
         },
         Rule::f => Footnote {
-            style: to_footnote_style(next_str()),
-            caller: to_caller(next_str()),
-            elements: pairs.map(to_footnote_element).collect(),
+            style: to_footnote_style(pairs.next_str()),
+            caller: to_caller(pairs.next_str()),
+            elements: pairs.map(to_footnote_element),
         },
         Rule::x => CrossRef {
-            style: to_cross_ref_style(next_str()),
-            caller: to_caller(next_str()),
-            elements: pairs.map(to_cross_ref_element).collect(),
+            style: to_cross_ref_style(pairs.next_str()),
+            caller: to_caller(pairs.next_str()),
+            elements: pairs.map(to_cross_ref_element),
         },
         _ => unreachable!(),
     }
@@ -140,35 +116,29 @@ pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
     if rule == Rule::line {
         return Line(pair.to_string());
     }
-    let mut pairs = pair.into_inner();
-    let mut next = || pairs.next().unwrap();
-    let mut next_str = || next().as_str();
+    let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
         Rule::k => Character {
-            ty: to_character_type(next_str()),
-            contents: pairs.map(to_character_contents).collect(),
+            ty: to_character_type(pairs.next_str()),
+            contents: pairs.map(to_character_contents),
         },
         _ => unreachable!(),
     }
 }
 
 pub fn to_footnote_element(pair: Pair<Rule>) -> FootnoteElement {
-    let mut pairs = pair.into_inner();
-    let mut next = || pairs.next().unwrap();
-    let mut next_str = || next().as_str();
+    let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     FootnoteElement {
-        style: to_footnote_element_style(next_str()),
-        contents: pairs.map(to_character_contents).collect(),
+        style: to_footnote_element_style(pairs.next_str()),
+        contents: pairs.map(to_character_contents),
     }
 }
 
 pub fn to_cross_ref_element(pair: Pair<Rule>) -> CrossRefElement {
-    let mut pairs = pair.into_inner();
-    let mut next = || pairs.next().unwrap();
-    let mut next_str = || next().as_str();
+    let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     CrossRefElement {
-        style: to_cross_ref_element_style(next_str()),
-        contents: pairs.map(to_character_contents).collect(),
+        style: to_cross_ref_element_style(pairs.next_str()),
+        contents: pairs.map(to_character_contents),
     }
 }
 
