@@ -1,10 +1,6 @@
+extern crate usfm;
 use std::{fs::read_to_string, path::PathBuf};
-
-use pest::Parser;
-use rkyv_usfm::{
-    parser::{Rule, UsfmParser, to_book},
-    usfm::*,
-};
+use usfm::*;
 
 static MANIFEST_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
@@ -20,9 +16,9 @@ fn parse_web_genesis() {
     let file = PathBuf::from(MANIFEST_DIR).join("usfm/02-GENeng-web.usfm");
     let input = read_to_string(file).unwrap();
 
-    let pairs = UsfmParser::parse(Rule::book, &input).unwrap();
+    let book = parse(&input);
     assert_eq!(
-        to_book(pairs).contents[9..11],
+        book.contents[9..11],
         vec![
             Chapter(1),
             Paragraph {
@@ -54,4 +50,13 @@ fn parse_web_genesis() {
             }
         ]
     );
+}
+
+#[test]
+fn parse_webpb_genesis() {
+    let file = PathBuf::from(MANIFEST_DIR).join("usfm/02-GENengwebpb.usfm");
+    let input = read_to_string(file).unwrap();
+
+    let book = parse(&input);
+    println!("{:?}", book.contents);
 }

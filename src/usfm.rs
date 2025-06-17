@@ -1,9 +1,9 @@
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Book {
     pub contents: Vec<BookContents>,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum BookContents {
     Id {
         code: BookIdentifier,
@@ -31,13 +31,14 @@ pub enum BookContents {
     },
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum ParagraphContents {
     Verse(u16),
     Line(String),
     Character {
         ty: CharacterType,
         contents: Vec<CharacterContents>,
+        attributes: Vec<(String, String)>,
     },
     Footnote {
         style: FootnoteStyle,
@@ -51,12 +52,13 @@ pub enum ParagraphContents {
     },
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum ElementContents {
     Line(String),
     Character {
         ty: CharacterType,
         contents: Vec<CharacterContents>,
+        attributes: Vec<(String, String)>,
     },
     Footnote {
         style: FootnoteStyle,
@@ -70,16 +72,17 @@ pub enum ElementContents {
     },
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum CharacterContents {
     Line(String),
     Character {
         ty: CharacterType,
         contents: Vec<CharacterContents>,
+        attributes: Vec<(String, String)>,
     },
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum FootnoteElement {
     Reference {
         chapter: u16,
@@ -92,7 +95,7 @@ pub enum FootnoteElement {
     },
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum CrossRefElement {
     Reference {
         chapter: u16,
@@ -105,7 +108,7 @@ pub enum CrossRefElement {
     },
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum FootnoteElementStyle {
     Reference,
     TranslationQuote,
@@ -119,7 +122,7 @@ pub enum FootnoteElementStyle {
     ReferenceMark,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum CrossRefElementStyle {
     Reference,
     Keyword,
@@ -133,7 +136,7 @@ pub enum CrossRefElementStyle {
     InlineQuote,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum CharacterType {
     IntroOutline,
     IntroQuote,
@@ -177,18 +180,18 @@ pub enum CharacterType {
     Link,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum FootnoteStyle {
     Footnote,
     Endnote,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum CrossRefStyle {
     CrossRef,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum ParagraphStyle {
     Normal,
     Margin,
@@ -207,7 +210,7 @@ pub enum ParagraphStyle {
     LiturgicalNote,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum PoetryStyle {
     Normal(u8),
     Right,
@@ -217,7 +220,7 @@ pub enum PoetryStyle {
     Descriptive,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum ElementType {
     Remark,
     Header,
@@ -259,20 +262,20 @@ pub enum ElementType {
     Division(u8),
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum EmptyType {
     Blank,
     PageBreak,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum Caller {
     Auto,
     None,
     Some(char),
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum BookIdentifier {
     Genesis,
     Exodus,
@@ -395,7 +398,7 @@ pub enum BookIdentifier {
     ExtraG,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 pub enum BookEncoding {
     CP1252,
     CP1251,

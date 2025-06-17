@@ -33,4 +33,12 @@ impl<'i, R: RuleType> Unpack<'i, R> {
     pub fn map<T, F: Fn(Pair<'i, R>) -> T>(self, f: F) -> Vec<T> {
         self.0.map(f).collect()
     }
+
+    pub fn map_if<T, F: Fn(Pair<'i, R>) -> T>(&self, only: bool, rules: &[R], f: F) -> Vec<T> {
+        self.0
+            .clone()
+            .filter(|pair| !(rules.contains(&pair.as_rule()) ^ only))
+            .map(f)
+            .collect()
+    }
 }

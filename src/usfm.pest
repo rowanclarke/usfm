@@ -31,26 +31,22 @@ fe = { esc ~ PUSH(fe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP
 x = { esc ~ PUSH(x_style) ~ " " ~ caller ~ " " ~ (esc ~ "xo " ~ reference ~ " ")? ~ x_contents ~ esc ~ POP ~ "*" }
 xe = { esc ~ PUSH(xe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
 
-p_style = { "p" | "m" | "po" | "pr" | "cls" | "pmo" | "pm" | "pmc" | "pmr" | "mi" | "nb" | "pc" | "lit" }
-pn_style = { "pi" | "ph" }
-q_style = {  "qr" | "qc" | "qa" | "qd" }
-qn_style = { "q" | "qm" }
+p_style = { "cls" | "lit" | "mi" | "m" | "nb" | "pc" | "pmc" | "pmo" | "pmr" | "pm" | "po" | "pr" | "p" }
+pn_style = { "ph" | "pi"
+ }
+q_style = { "qa" | "qc" | "qd" | "qr" }
+qn_style = { "qm" | "q" }
 
-e_type = { "rem" | "h" | "ip" | "ipi" | "im" | "imi" | "ipq" | "imq" | "ipr" | "ib" | "iot" | "iex" | "ie" | "cl" | "cp" | "cd" | "mr" | "sr" | "r" | "d" | "sp" }
-en_type = { "toc" | "toca" | "imt" | "is" | "iq" | "ili" | "io" | "imte" | "mt" | "mte" | "ms" | "s" | "sd" }
+e_type = { "cd" | "cl" | "cp" | "d" | "h" | "ib" | "iex" | "ie" | "imi" | "imq" | "im" | "iot" | "ipi" | "ipq" | "ipr" | "ip" | "mr" | "rem" | "r" | "sp" | "sr" }
+en_type = { "ili" | "imte" | "imt" | "io" | "iq" | "is" | "ms" | "mte" | "mt" | "sd" | "s" | "toca" | "toc" }
 em_type = { "b" | "pb" }
 
-k_style = {
-    "ior" | "iqt" | "rq" | "vp" | "qs" | "qac" |
-    "add" | "bk" | "dc" | "k" | "nd" | "ord" | "pn" | "png" | "addpn" | "qt" | "sig" | "sls" | "tl" | "wj" |
-    "em" | "bd" | "it" | "bdit" | "no" | "sc" | "sup" |
-    "ndx" | "rb" | "pro" | "w" | "wg" | "wh" | "wa" | "jmp"
-}
+k_style = { "addpn" | "add" | "bdit" | "bd" | "bk" | "dc" | "em" | "ior" | "iqt" | "it" | "jmp" | "k" | "ndx" | "nd" | "no" | "ord" | "png" | "pn" | "pro" | "qac" | "qs" | "qt" | "rb" | "rq" | "sc" | "sig" | "sls" | "sup" | "tl" | "vp" | "wa" | "wg" | "wh" | "wj" | "w" }
 
-f_style = { "f" | "fe" }
-fe_style = { "fq" | "fqa" | "fk" | "fl" | "fw" | "fp" | "ft" | "fdc" | "fm" }
+f_style = { "fe" | "f" }
+fe_style = { "fdc" | "fk" | "fl" | "fm" | "fp" | "fqa" | "fq" | "ft" | "fw" }
 x_style = { "x" }
-xe_style = { "xk" | "xq" | "xt" | "xta" | "xop" | "xot" | "xnt" | "xdc" | "rq" }
+xe_style = { "rq" | "xdc" | "xk" | "xnt" | "xop" | "xot" | "xq" | "xta" | "xt" }
 
 p_contents = _{ (nl ~ v | unnested)+ }
 e_contents = _{ unnested+ }

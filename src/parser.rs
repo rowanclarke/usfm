@@ -72,7 +72,8 @@ pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
         Rule::v => Verse(pairs.next_value()),
         Rule::k => Character {
             ty: to_character_type(pairs.next_str()),
-            contents: pairs.map(to_character_contents),
+            contents: pairs.map_if(false, &[Rule::attrib, Rule::value], to_character_contents),
+            attributes: pairs.map_if(true, &[Rule::attrib, Rule::value], to_attribute),
         },
         Rule::f => Footnote {
             style: to_footnote_style(pairs.next_str()),
@@ -98,7 +99,8 @@ pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
     match rule {
         Rule::k => Character {
             ty: to_character_type(pairs.next_str()),
-            contents: pairs.map(to_character_contents),
+            contents: pairs.map_if(false, &[Rule::attrib, Rule::value], to_character_contents),
+            attributes: pairs.map_if(true, &[Rule::attrib, Rule::value], to_attribute),
         },
         Rule::f => Footnote {
             style: to_footnote_style(pairs.next_str()),
@@ -122,9 +124,10 @@ pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
     }
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::k => Character {
+        Rule::k | Rule::nk => Character {
             ty: to_character_type(pairs.next_str()),
-            contents: pairs.map(to_character_contents),
+            contents: pairs.map_if(false, &[Rule::attrib, Rule::value], to_character_contents),
+            attributes: pairs.map_if(true, &[Rule::attrib, Rule::value], to_attribute),
         },
         _ => panic!("Unexpected rule {:?} in to_character_contents", rule),
     }
@@ -161,6 +164,15 @@ pub fn to_cross_ref_element(pair: Pair<Rule>) -> CrossRefElement {
     Element {
         style: to_cross_ref_element_style(pairs.next_str()),
         contents: pairs.map(to_character_contents),
+    }
+}
+
+pub fn to_attribute(pair: Pair<Rule>) -> (String, String) {
+    if pair.as_rule() == Rule::attrib {
+        let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
+        (pairs.next_str().to_string(), pairs.next_str().to_string())
+    } else {
+        ("lemma".to_string(), pair.as_str().to_string())
     }
 }
 
