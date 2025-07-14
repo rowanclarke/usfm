@@ -5,107 +5,103 @@ pub struct Book {
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum BookContents {
-    Id {
-        code: BookIdentifier,
-        text: String,
-    },
+    Id { code: BookIdentifier, text: String },
     Usfm(String),
     Encoding(BookEncoding),
     Status(u16),
     Chapter(u16),
     AltChapter(u16),
-    Paragraph {
-        style: ParagraphStyle,
-        contents: Vec<ParagraphContents>,
-    },
-    Poetry {
-        style: PoetryStyle,
-        contents: Vec<ParagraphContents>,
-    },
-    Element {
-        ty: ElementType,
-        contents: Vec<ElementContents>,
-    },
-    Empty {
-        ty: EmptyType,
-    },
+    Paragraph(Paragraph),
+    Poetry(Poetry),
+    Element(Element),
+    Empty(EmptyType),
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum ParagraphContents {
     Verse(u16),
     Line(String),
-    Character {
-        ty: CharacterType,
-        contents: Vec<CharacterContents>,
-        attributes: Vec<(String, String)>,
-    },
-    Footnote {
-        style: FootnoteStyle,
-        caller: Caller,
-        elements: Vec<FootnoteElement>,
-    },
-    CrossRef {
-        style: CrossRefStyle,
-        caller: Caller,
-        elements: Vec<CrossRefElement>,
-    },
+    Character(Character),
+    Footnote(Footnote),
+    CrossRef(CrossRef),
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum ElementContents {
     Line(String),
-    Character {
-        ty: CharacterType,
-        contents: Vec<CharacterContents>,
-        attributes: Vec<(String, String)>,
-    },
-    Footnote {
-        style: FootnoteStyle,
-        caller: Caller,
-        elements: Vec<FootnoteElement>,
-    },
-    CrossRef {
-        style: CrossRefStyle,
-        caller: Caller,
-        elements: Vec<CrossRefElement>,
-    },
+    Character(Character),
+    Footnote(Footnote),
+    CrossRef(CrossRef),
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum CharacterContents {
     Line(String),
-    Character {
-        ty: CharacterType,
-        contents: Vec<CharacterContents>,
-        attributes: Vec<(String, String)>,
-    },
+    Character(Character),
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum FootnoteElement {
-    Reference {
-        chapter: u16,
-        separator: char,
-        verse: u16,
-    },
-    Element {
-        style: FootnoteElementStyle,
-        contents: Vec<CharacterContents>,
-    },
+    Reference(NoteReference),
+    Element(NoteElement<FootnoteElementStyle>),
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum CrossRefElement {
-    Reference {
-        chapter: u16,
-        separator: char,
-        verse: u16,
-    },
-    Element {
-        style: CrossRefElementStyle,
-        contents: Vec<CharacterContents>,
-    },
+    Reference(NoteReference),
+    Element(NoteElement<CrossRefElementStyle>),
+}
+
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct Paragraph {
+    pub style: ParagraphStyle,
+    pub contents: Vec<ParagraphContents>,
+}
+
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct Poetry {
+    pub style: PoetryStyle,
+    pub contents: Vec<ParagraphContents>,
+}
+
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct Element {
+    pub ty: ElementType,
+    pub contents: Vec<ElementContents>,
+}
+
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct Character {
+    pub ty: CharacterType,
+    pub contents: Vec<CharacterContents>,
+    pub attributes: Vec<(String, String)>,
+}
+
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct Footnote {
+    pub style: FootnoteStyle,
+    pub caller: Caller,
+    pub elements: Vec<FootnoteElement>,
+}
+
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct CrossRef {
+    pub style: CrossRefStyle,
+    pub caller: Caller,
+    pub elements: Vec<CrossRefElement>,
+}
+
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct NoteReference {
+    pub chapter: u16,
+    pub separator: char,
+    pub verse: u16,
+}
+
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct NoteElement<NoteStyle> {
+    pub style: NoteStyle,
+    pub contents: Vec<CharacterContents>,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]

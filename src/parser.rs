@@ -16,155 +16,153 @@ pub fn to_book(pairs: Pairs<Rule>) -> Book {
 }
 
 pub fn to_book_contents(pair: Pair<Rule>) -> BookContents {
-    use BookContents::*;
+    use BookContents as C;
     let rule = pair.as_rule();
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
 
     match rule {
-        Rule::id => Id {
+        Rule::id => C::Id {
             code: to_book_identifier(pairs.next_str()),
             text: pairs.next_str().to_string(),
         },
-        Rule::usfm => Usfm(pairs.next_str().to_string()),
-        Rule::ide => Encoding(to_book_encoding(pairs.next_str())),
-        Rule::sts => Status(pairs.next_value()),
-        Rule::c => Chapter(pairs.next_value()),
-        Rule::ca => AltChapter(pairs.next_value()),
-        Rule::p => Paragraph {
+        Rule::usfm => C::Usfm(pairs.next_str().to_string()),
+        Rule::ide => C::Encoding(to_book_encoding(pairs.next_str())),
+        Rule::sts => C::Status(pairs.next_value()),
+        Rule::c => C::Chapter(pairs.next_value()),
+        Rule::ca => C::AltChapter(pairs.next_value()),
+        Rule::p => C::Paragraph(Paragraph {
             style: to_paragraph_style(pairs.next_str()),
             contents: pairs.map(to_paragraph_contents),
-        },
-        Rule::pn => Paragraph {
+        }),
+        Rule::pn => C::Paragraph(Paragraph {
             style: to_numbered_paragraph_style(pairs.next_str(), pairs.next_value()),
             contents: pairs.map(to_paragraph_contents),
-        },
-        Rule::q => Poetry {
+        }),
+        Rule::q => C::Poetry(Poetry {
             style: to_poetry_style(pairs.next_str()),
             contents: pairs.map(to_paragraph_contents),
-        },
-        Rule::qn => Poetry {
+        }),
+        Rule::qn => C::Poetry(Poetry {
             style: to_numbered_poetry_style(pairs.next_str(), pairs.next_value()),
             contents: pairs.map(to_paragraph_contents),
-        },
-        Rule::e => Element {
+        }),
+        Rule::e => C::Element(Element {
             ty: to_element_type(pairs.next_str()),
             contents: pairs.map(to_element_contents),
-        },
-        Rule::en => Element {
+        }),
+        Rule::en => C::Element(Element {
             ty: to_numbered_element_type(pairs.next_str(), pairs.next_value()),
             contents: pairs.map(to_element_contents),
-        },
-        Rule::em => Empty {
-            ty: to_empty_type(pairs.next_str()),
-        },
+        }),
+        Rule::em => C::Empty(to_empty_type(pairs.next_str())),
         _ => panic!("Unexpected rule {:?} in to_book_contents", rule),
     }
 }
 
 pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
-    use ParagraphContents::*;
+    use ParagraphContents as C;
     let rule = pair.as_rule();
     if rule == Rule::line {
-        return Line(pair.as_str().to_string());
+        return C::Line(pair.as_str().to_string());
     }
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::v => Verse(pairs.next_value()),
-        Rule::k => Character {
+        Rule::v => C::Verse(pairs.next_value()),
+        Rule::k => C::Character(Character {
             ty: to_character_type(pairs.next_str()),
             contents: pairs.map_if(false, &[Rule::attrib, Rule::value], to_character_contents),
             attributes: pairs.map_if(true, &[Rule::attrib, Rule::value], to_attribute),
-        },
-        Rule::f => Footnote {
+        }),
+        Rule::f => C::Footnote(Footnote {
             style: to_footnote_style(pairs.next_str()),
             caller: to_caller(pairs.next_char()),
             elements: pairs.map(to_footnote_element),
-        },
-        Rule::x => CrossRef {
+        }),
+        Rule::x => C::CrossRef(CrossRef {
             style: to_cross_ref_style(pairs.next_str()),
             caller: to_caller(pairs.next_char()),
             elements: pairs.map(to_cross_ref_element),
-        },
+        }),
         _ => panic!("Unexpected rule {:?} in to_paragraph_contents", rule),
     }
 }
 
 pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
-    use ElementContents::*;
+    use ElementContents as C;
     let rule = pair.as_rule();
     if rule == Rule::line {
-        return Line(pair.as_str().to_string());
+        return C::Line(pair.as_str().to_string());
     }
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::k => Character {
+        Rule::k => C::Character(Character {
             ty: to_character_type(pairs.next_str()),
             contents: pairs.map_if(false, &[Rule::attrib, Rule::value], to_character_contents),
             attributes: pairs.map_if(true, &[Rule::attrib, Rule::value], to_attribute),
-        },
-        Rule::f => Footnote {
+        }),
+        Rule::f => C::Footnote(Footnote {
             style: to_footnote_style(pairs.next_str()),
             caller: to_caller(pairs.next_char()),
             elements: pairs.map(to_footnote_element),
-        },
-        Rule::x => CrossRef {
+        }),
+        Rule::x => C::CrossRef(CrossRef {
             style: to_cross_ref_style(pairs.next_str()),
             caller: to_caller(pairs.next_char()),
             elements: pairs.map(to_cross_ref_element),
-        },
+        }),
         _ => panic!("Unexpected rule {:?} in to_element_contents", rule),
     }
 }
 
 pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
-    use CharacterContents::*;
+    use CharacterContents as C;
     let rule = pair.as_rule();
     if rule == Rule::line {
-        return Line(pair.as_str().to_string());
+        return C::Line(pair.as_str().to_string());
     }
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::k | Rule::nk => Character {
+        Rule::k | Rule::nk => C::Character(Character {
             ty: to_character_type(pairs.next_str()),
             contents: pairs.map_if(false, &[Rule::attrib, Rule::value], to_character_contents),
             attributes: pairs.map_if(true, &[Rule::attrib, Rule::value], to_attribute),
-        },
+        }),
         _ => panic!("Unexpected rule {:?} in to_character_contents", rule),
     }
 }
 
 pub fn to_footnote_element(pair: Pair<Rule>) -> FootnoteElement {
-    use FootnoteElement::*;
+    use FootnoteElement as C;
     let rule = pair.as_rule();
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     if rule == Rule::reference {
-        return Reference {
+        return C::Reference(NoteReference {
             chapter: pairs.next_value(),
             separator: pairs.next_char(),
             verse: pairs.next_value(),
-        };
+        });
     }
-    Element {
+    C::Element(NoteElement {
         style: to_footnote_element_style(pairs.next_str()),
         contents: pairs.map(to_character_contents),
-    }
+    })
 }
 
 pub fn to_cross_ref_element(pair: Pair<Rule>) -> CrossRefElement {
-    use CrossRefElement::*;
+    use CrossRefElement as C;
     let rule = pair.as_rule();
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     if rule == Rule::reference {
-        return Reference {
+        return C::Reference(NoteReference {
             chapter: pairs.next_value(),
             separator: pairs.next_char(),
             verse: pairs.next_value(),
-        };
+        });
     }
-    Element {
+    C::Element(NoteElement {
         style: to_cross_ref_element_style(pairs.next_str()),
         contents: pairs.map(to_character_contents),
-    }
+    })
 }
 
 pub fn to_attribute(pair: Pair<Rule>) -> (String, String) {

@@ -55,9 +55,9 @@ f_contents = _{ fe+ }
 x_contents = _{ xe+ }
 n_contents = _{ nested+ }
 
-unnested = _{ k | f | x | line }
-nested = _{ nk | line }
-line = { (!(esc | "|" | nl ~ EOI) ~ ANY)+ }
+unnested = _{ line | k | f | x }
+nested = _{ line | nk }
+line = { (!(nl ~ "\\" | "\\" | "|" | nl ~ EOI) ~ ANY)+ }
 attrib = { name ~ "=\"" ~ value ~ "\"" }
 name = { ('a'..'z' | "-")+ }
 value = { (!"\"" ~ ANY)* }
