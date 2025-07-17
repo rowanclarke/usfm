@@ -271,7 +271,7 @@ pub enum Caller {
     Some(char),
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash)]
 pub enum BookIdentifier {
     Genesis,
     Exodus,

@@ -32,8 +32,7 @@ x = { esc ~ PUSH(x_style) ~ " " ~ caller ~ " " ~ (esc ~ "xo " ~ reference ~ " ")
 xe = { esc ~ PUSH(xe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
 
 p_style = { "cls" | "lit" | "mi" | "m" | "nb" | "pc" | "pmc" | "pmo" | "pmr" | "pm" | "po" | "pr" | "p" }
-pn_style = { "ph" | "pi"
- }
+pn_style = { "ph" | "pi" }
 q_style = { "qa" | "qc" | "qd" | "qr" }
 qn_style = { "qm" | "q" }
 
@@ -68,4 +67,3 @@ caller = { "+" | "-" | "?" }
 num = { ('0'..'9')+ }
 reference = { num ~ sep ~ num }
 sep = { ANY }
-
