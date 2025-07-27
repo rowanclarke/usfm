@@ -1,24 +1,19 @@
 extern crate usfm;
+use rkyv::{deserialize, rancor::Error};
 use std::{fs::read_to_string, path::PathBuf};
 use usfm::*;
 
 static MANIFEST_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
-#[test]
-fn parse_web_genesis() {
+fn assert_web_genesis(genesis: &Book) {
     use BookContents as A;
     use Caller::Auto;
     use FootnoteElement as C;
     use FootnoteElementStyle::Text;
     use ParagraphContents as B;
     use ParagraphStyle::Normal;
-
-    let file = PathBuf::from(MANIFEST_DIR).join("usfm/02-GENeng-web.usfm");
-    let input = read_to_string(file).unwrap();
-
-    let book = parse(&input);
     assert_eq!(
-        book.contents[9..11],
+        genesis.contents[9..11],
         vec![
             A::Chapter(1),
             A::Paragraph(Paragraph{
@@ -50,6 +45,27 @@ fn parse_web_genesis() {
             })
         ]
     );
+}
+
+fn parse_web_genesis() -> Book {
+    let file = PathBuf::from(MANIFEST_DIR).join("usfm/02-GENeng-web.usfm");
+    let input = read_to_string(file).unwrap();
+    parse(&input)
+}
+
+#[test]
+fn web_genesis() {
+    let genesis = parse_web_genesis();
+    assert_web_genesis(&genesis);
+}
+
+#[test]
+fn rkyv_web_genesis() {
+    let genesis = parse_web_genesis();
+    let bytes = rkyv::to_bytes::<Error>(&genesis).unwrap();
+    let archived = rkyv::access::<ArchivedBook, Error>(&bytes).unwrap();
+    let genesis = &deserialize::<_, Error>(archived).unwrap();
+    assert_web_genesis(genesis);
 }
 
 #[test]

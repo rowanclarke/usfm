@@ -1,9 +1,14 @@
-#[derive(Debug, PartialEq, Eq, Clone)]
+use rkyv::{Archive, Deserialize, Serialize};
+use std::{cmp, fmt, hash};
+
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub struct Book {
     pub contents: Vec<BookContents>,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum BookContents {
     Id { code: BookIdentifier, text: String },
     Usfm(String),
@@ -17,7 +22,8 @@ pub enum BookContents {
     Empty(EmptyType),
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum ParagraphContents {
     Verse(u16),
     Line(String),
@@ -26,7 +32,8 @@ pub enum ParagraphContents {
     CrossRef(CrossRef),
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum ElementContents {
     Line(String),
     Character(Character),
@@ -34,77 +41,104 @@ pub enum ElementContents {
     CrossRef(CrossRef),
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum CharacterContents {
     Line(String),
     Character(Character),
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum FootnoteElement {
     Reference(NoteReference),
     Element(NoteElement<FootnoteElementStyle>),
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum CrossRefElement {
     Reference(NoteReference),
     Element(NoteElement<CrossRefElementStyle>),
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub struct Paragraph {
     pub style: ParagraphStyle,
     pub contents: Vec<ParagraphContents>,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub struct Poetry {
     pub style: PoetryStyle,
     pub contents: Vec<ParagraphContents>,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub struct Element {
     pub ty: ElementType,
     pub contents: Vec<ElementContents>,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
+#[rkyv(serialize_bounds(
+    __S: rkyv::ser::Writer + rkyv::ser::Allocator,
+    __S::Error: rkyv::rancor::Source,
+))]
+#[rkyv(deserialize_bounds(__D::Error: rkyv::rancor::Source))]
+#[rkyv(bytecheck(
+    bounds(
+        __C: rkyv::validation::ArchiveContext,
+        __C::Error: rkyv::rancor::Source,
+    )
+))]
 pub struct Character {
     pub ty: CharacterType,
+    #[rkyv(omit_bounds)]
     pub contents: Vec<CharacterContents>,
     pub attributes: Vec<(String, String)>,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub struct Footnote {
     pub style: FootnoteStyle,
     pub caller: Caller,
     pub elements: Vec<FootnoteElement>,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub struct CrossRef {
     pub style: CrossRefStyle,
     pub caller: Caller,
     pub elements: Vec<CrossRefElement>,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub struct NoteReference {
     pub chapter: u16,
     pub separator: char,
     pub verse: u16,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
-pub struct NoteElement<NoteStyle> {
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
+pub struct NoteElement<NoteStyle: Archive>
+where
+    <NoteStyle as Archive>::Archived: fmt::Debug + cmp::Eq + hash::Hash,
+{
     pub style: NoteStyle,
     pub contents: Vec<CharacterContents>,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum FootnoteElementStyle {
     Reference,
     TranslationQuote,
@@ -118,7 +152,8 @@ pub enum FootnoteElementStyle {
     ReferenceMark,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum CrossRefElementStyle {
     Reference,
     Keyword,
@@ -132,7 +167,8 @@ pub enum CrossRefElementStyle {
     InlineQuote,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum CharacterType {
     IntroOutline,
     IntroQuote,
@@ -176,18 +212,21 @@ pub enum CharacterType {
     Link,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum FootnoteStyle {
     Footnote,
     Endnote,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum CrossRefStyle {
     CrossRef,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum ParagraphStyle {
     Normal,
     Margin,
@@ -206,7 +245,8 @@ pub enum ParagraphStyle {
     LiturgicalNote,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum PoetryStyle {
     Normal(u8),
     Right,
@@ -216,7 +256,8 @@ pub enum PoetryStyle {
     Descriptive,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum ElementType {
     Remark,
     Header,
@@ -258,20 +299,23 @@ pub enum ElementType {
     Division(u8),
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum EmptyType {
     Blank,
     PageBreak,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum Caller {
     Auto,
     None,
     Some(char),
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Hash)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum BookIdentifier {
     Genesis,
     Exodus,
@@ -394,7 +438,8 @@ pub enum BookIdentifier {
     ExtraG,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Hash, PartialEq, Eq, Debug))]
 pub enum BookEncoding {
     CP1252,
     CP1251,
