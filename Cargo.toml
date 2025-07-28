@@ -1,8 +1,14 @@
 [package]
 name = "usfm"
 version = "0.1.0"
+authors = ["Rowan Clarke <36474636+rowanclarke@users.noreply.github.com>"]
+license = "MIT"
+description = "Unified Standard Format Markers (USFM) parser with zero-copy derserialization."
 edition = "2024"
-
+repository = "https://github.com/rowanclarke/usfm"
+readme = "README.md"
+keywords = ["scripture", "bible", "usfm", "format"]
+ 
 [dependencies]
 pest = "2.7.13"
 pest-ast = "0.3.4"
