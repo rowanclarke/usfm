@@ -1,6 +1,10 @@
 [package]
-name = "rkyv-usfm"
+name = "usfm"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+pest = "2.7.13"
+pest-ast = "0.3.4"
+pest_derive = "2.7.13"
+rkyv = "0.8.10"

@@ -1,14 +1,12 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+pub mod parser;
+pub mod usfm;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub use usfm::*;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+use parser::UsfmParser;
+use parser::{Rule, to_book};
+use pest::Parser;
+
+pub fn parse(input: &str) -> Book {
+    to_book(UsfmParser::parse(Rule::book, input).unwrap())
 }

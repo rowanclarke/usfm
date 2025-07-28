@@ -1,0 +1,69 @@
+lf = _{ "\n" | "\r" | "\n\r" }
+sp = _{ " " | "\t" }
+ws = _{ (sp | lf)* }
+nl = _{ sp* ~ lf ~ ws }
+esc = _{ ws ~ "\\" }
+
+book = _{ (p | pn | q | qn | e | en | id | usfm | ide | sts | c | ca | em)+ }
+
+p = { esc ~ p_style ~ (" " | &nl) ~ p_contents ~ nl }
+pn = { esc ~ pn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
+q = { esc ~ q_style ~ (" " | &nl) ~ p_contents ~ nl }
+qn = { esc ~ qn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
+
+e = { esc ~ e_type ~ " " ~ e_contents ~ nl }
+en = { esc ~ en_type ~ num ~ " " ~ e_contents ~ nl }
+id = { esc ~ "id " ~ code ~ " " ~ e_contents ~ nl }
+usfm = { esc ~ "usfm " ~ version ~ nl }
+ide = { esc ~ "ide " ~ encoding ~ nl }
+sts = { esc ~ "sts " ~ num ~ nl }
+c = { esc ~ "c " ~ num ~ nl }
+ca = { esc ~ PUSH("ca") ~ " " ~ num ~ esc ~ POP ~ "*" }
+em = { esc ~ em_type ~ nl }
+
+v = { esc ~ "v " ~ num ~ " " }
+
+k = { esc ~ PUSH(k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+nk = { esc ~ PUSH("+" ~ k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+
+f = { esc ~ PUSH(f_style) ~ " " ~ caller ~ " " ~ (esc ~ "fr " ~ reference ~ " ")? ~ f_contents ~ esc ~ POP ~ "*" }
+fe = { esc ~ PUSH(fe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
+x = { esc ~ PUSH(x_style) ~ " " ~ caller ~ " " ~ (esc ~ "xo " ~ reference ~ " ")? ~ x_contents ~ esc ~ POP ~ "*" }
+xe = { esc ~ PUSH(xe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
+
+p_style = { "cls" | "lit" | "mi" | "m" | "nb" | "pc" | "pmc" | "pmo" | "pmr" | "pm" | "po" | "pr" | "p" }
+pn_style = { "ph" | "pi" }
+q_style = { "qa" | "qc" | "qd" | "qr" }
+qn_style = { "qm" | "q" }
+
+e_type = { "cd" | "cl" | "cp" | "d" | "h" | "ib" | "iex" | "ie" | "imi" | "imq" | "im" | "iot" | "ipi" | "ipq" | "ipr" | "ip" | "mr" | "rem" | "r" | "sp" | "sr" }
+en_type = { "ili" | "imte" | "imt" | "io" | "iq" | "is" | "ms" | "mte" | "mt" | "sd" | "s" | "toca" | "toc" }
+em_type = { "b" | "pb" }
+
+k_style = { "addpn" | "add" | "bdit" | "bd" | "bk" | "dc" | "em" | "ior" | "iqt" | "it" | "jmp" | "k" | "ndx" | "nd" | "no" | "ord" | "png" | "pn" | "pro" | "qac" | "qs" | "qt" | "rb" | "rq" | "sc" | "sig" | "sls" | "sup" | "tl" | "vp" | "wa" | "wg" | "wh" | "wj" | "w" }
+
+f_style = { "fe" | "f" }
+fe_style = { "fdc" | "fk" | "fl" | "fm" | "fp" | "fqa" | "fq" | "ft" | "fw" }
+x_style = { "x" }
+xe_style = { "rq" | "xdc" | "xk" | "xnt" | "xop" | "xot" | "xq" | "xta" | "xt" }
+
+p_contents = _{ (nl ~ v | unnested)+ }
+e_contents = _{ unnested+ }
+k_contents = _{ ws ~ nested+ ~ ("|" ~ (attrib+ | value))? }
+f_contents = _{ fe+ }
+x_contents = _{ xe+ }
+n_contents = _{ nested+ }
+
+unnested = _{ line | k | f | x }
+nested = _{ line | nk }
+line = { (!(nl ~ "\\" | "\\" | "|" | nl ~ EOI) ~ ANY)+ }
+attrib = { name ~ "=\"" ~ value ~ "\"" }
+name = { ('a'..'z' | "-")+ }
+value = { (!"\"" ~ ANY)* }
+code = { ('A'..'Z' | '0'..'9')+ }
+encoding = { "CP-1252" | "CP-1251" | "UTF-8" | "UTF-16" }
+version = { num ~ ("." ~ num)* }
+caller = { "+" | "-" | "?" } 
+num = { ('0'..'9')+ }
+reference = { num ~ sep ~ num }
+sep = { ANY }
