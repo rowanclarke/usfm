@@ -23,7 +23,7 @@ pub fn to_book_contents(pair: Pair<Rule>) -> BookContents {
     match rule {
         Rule::id => C::Id {
             code: to_book_identifier(pairs.next_str()),
-            text: pairs.next_str().to_string(),
+            text: pairs.next_str_opt().map(str::to_string),
         },
         Rule::usfm => C::Usfm(pairs.next_str().to_string()),
         Rule::ide => C::Encoding(to_book_encoding(pairs.next_str())),

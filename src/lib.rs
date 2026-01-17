@@ -8,5 +8,6 @@ use parser::{Rule, to_book};
 use pest::Parser;
 
 pub fn parse(input: &str) -> Book {
-    to_book(UsfmParser::parse(Rule::book, input).unwrap())
+    let parsed = UsfmParser::parse(Rule::book, input).unwrap();
+    to_book(parsed)
 }

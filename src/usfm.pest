@@ -13,7 +13,7 @@ qn = { esc ~ qn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
 
 e = { esc ~ e_type ~ " " ~ e_contents ~ nl }
 en = { esc ~ en_type ~ num ~ " " ~ e_contents ~ nl }
-id = { esc ~ "id " ~ code ~ " " ~ e_contents ~ nl }
+id = { esc ~ "id " ~ code ~ (" " ~ e_contents)? ~ nl }
 usfm = { esc ~ "usfm " ~ version ~ nl }
 ide = { esc ~ "ide " ~ encoding ~ nl }
 sts = { esc ~ "sts " ~ num ~ nl }

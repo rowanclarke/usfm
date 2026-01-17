@@ -14,12 +14,16 @@ impl<'i, R> From<Pairs<'i, R>> for Unpack<'i, R> {
 }
 
 impl<'i, R: RuleType> Unpack<'i, R> {
-    pub fn next(&mut self) -> Pair<'i, R> {
-        self.0.next().unwrap()
+    pub fn next(&mut self) -> Option<Pair<'i, R>> {
+        self.0.next()
     }
 
     pub fn next_str(&mut self) -> &'i str {
-        self.next().as_str()
+        self.next_str_opt().unwrap()
+    }
+
+    pub fn next_str_opt(&mut self) -> Option<&'i str> {
+        self.next().as_ref().map(Pair::as_str)
     }
 
     pub fn next_value<T: FromStr>(&mut self) -> T {
