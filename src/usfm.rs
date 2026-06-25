@@ -25,16 +25,23 @@ pub enum BookContents {
     Poetry(Poetry),
     Element(Element),
     Empty(EmptyType),
+    TableRow(TableRow),
+    Sidebar(Sidebar),
+    Peripheral(String),
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
 #[rkyv(derive(Debug, PartialEq, Eq, Hash))]
 pub enum ParagraphContents {
-    Verse(u16),
+    Verse(String),
     Line(String),
     Character(Character),
     Footnote(Footnote),
     CrossRef(CrossRef),
+    Figure(Figure),
+    Milestone(Milestone),
+    Category(String),
+    OptionalBreak,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
@@ -44,6 +51,10 @@ pub enum ElementContents {
     Character(Character),
     Footnote(Footnote),
     CrossRef(CrossRef),
+    Figure(Figure),
+    Milestone(Milestone),
+    Category(String),
+    OptionalBreak,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
@@ -51,6 +62,9 @@ pub enum ElementContents {
 pub enum CharacterContents {
     Line(String),
     Character(Character),
+    Figure(Figure),
+    Milestone(Milestone),
+    OptionalBreak,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
@@ -134,12 +148,115 @@ pub struct NoteReference {
 
 #[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
 #[rkyv(derive(Debug, PartialEq, Eq, Hash))]
+#[rkyv(serialize_bounds(
+    __S: rkyv::ser::Writer + rkyv::ser::Allocator,
+    __S::Error: rkyv::rancor::Source,
+))]
+#[rkyv(deserialize_bounds(__D::Error: rkyv::rancor::Source))]
+#[rkyv(bytecheck(
+    bounds(
+        __C: rkyv::validation::ArchiveContext,
+        __C::Error: rkyv::rancor::Source,
+    )
+))]
 pub struct NoteElement<NoteStyle: Archive>
 where
     <NoteStyle as Archive>::Archived: fmt::Debug + cmp::Eq + hash::Hash,
 {
     pub style: NoteStyle,
+    #[rkyv(omit_bounds)]
     pub contents: Vec<CharacterContents>,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Debug, PartialEq, Eq, Hash))]
+pub struct TableRow {
+    pub cells: Vec<TableCell>,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Debug, PartialEq, Eq, Hash))]
+pub struct TableCell {
+    pub prefix: CellPrefix,
+    pub column: u8,
+    pub contents: Vec<ParagraphContents>,
+}
+
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Debug, PartialEq, Eq, Clone, Hash))]
+pub enum CellPrefix {
+    Header,
+    HeaderRight,
+    HeaderCenter,
+    Content,
+    ContentRight,
+    ContentCenter,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Debug, PartialEq, Eq, Hash))]
+#[rkyv(serialize_bounds(
+    __S: rkyv::ser::Writer + rkyv::ser::Allocator,
+    __S::Error: rkyv::rancor::Source,
+))]
+#[rkyv(deserialize_bounds(__D::Error: rkyv::rancor::Source))]
+#[rkyv(bytecheck(
+    bounds(
+        __C: rkyv::validation::ArchiveContext,
+        __C::Error: rkyv::rancor::Source,
+    )
+))]
+pub struct Figure {
+    #[rkyv(omit_bounds)]
+    pub contents: Vec<CharacterContents>,
+    pub attributes: Vec<(String, String)>,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Debug, PartialEq, Eq, Hash))]
+pub struct Milestone {
+    pub style: MilestoneStyle,
+    pub attributes: Vec<(String, String)>,
+}
+
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Debug, PartialEq, Eq, Clone, Hash))]
+pub enum MilestoneStyle {
+    QuotedText(u8, MilestoneDir),
+    QuotedTextStart,
+    QuotedTextEnd,
+    TextSection(MilestoneDir),
+    Text(MilestoneDir),
+    WordsOfJesus(MilestoneDir),
+    VerseId,
+    QuotedTextPlain,
+    TextSectionPlain,
+    TextPlain,
+    WordsOfJesusPlain,
+}
+
+#[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Debug, PartialEq, Eq, Clone, Hash))]
+pub enum MilestoneDir {
+    Start,
+    End,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Debug, PartialEq, Eq, Hash))]
+pub struct Sidebar {
+    pub contents: Vec<SidebarContents>,
+}
+
+#[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
+#[rkyv(derive(Debug, PartialEq, Eq, Hash))]
+pub enum SidebarContents {
+    Paragraph(Paragraph),
+    Poetry(Poetry),
+    Element(Element),
+    Empty(EmptyType),
+    TableRow(TableRow),
+    Category(String),
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
@@ -155,6 +272,7 @@ pub enum FootnoteElementStyle {
     Text,
     DeuteroText,
     ReferenceMark,
+    Verse,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
@@ -170,6 +288,7 @@ pub enum CrossRefElementStyle {
     NewTarget,
     DeuteroTarget,
     InlineQuote,
+    OriginRef,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
@@ -214,7 +333,20 @@ pub enum CharacterType {
     GreekWord,
     HebrewWord,
     AramaicWord,
+    ForeignWord,
     Link,
+
+    ExtFootnoteRef,
+    FootnoteVerse,
+    FootnoteRef,
+    ListTotal,
+    ListKey,
+    ListValue(u8),
+    InlineSubheading,
+    ScriptureRef,
+    TextAlternative,
+    AltVerse,
+    CrossRefTarget,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
@@ -222,12 +354,15 @@ pub enum CharacterType {
 pub enum FootnoteStyle {
     Footnote,
     Endnote,
+    ExtendedFootnote,
+    ExtendedEndnote,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
 #[rkyv(derive(Debug, PartialEq, Eq, Clone, Hash))]
 pub enum CrossRefStyle {
     CrossRef,
+    ExtendedCrossRef,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
@@ -244,10 +379,16 @@ pub enum ParagraphStyle {
     EmbeddedRefrain,
     Indented(u8),
     MarginIndented,
+    MarginIndentedNum(u8),
     Basic,
     Centered,
     HangingIndented(u8),
     LiturgicalNote,
+    ListHeader,
+    ListFooter,
+    Descriptive,
+    ListEntry(u8),
+    EmbeddedListEntry(u8),
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
@@ -278,8 +419,9 @@ pub enum ElementType {
     QuotedIntro,
     MarginQuotedIntro,
     RightIntro,
+    CenteredIntro,
+    LiturgicalIntro,
     PoetryIntro(u8),
-    BlankIntro,
     ListIntro(u8),
     OutlineIntro,
     EntryIntro(u8),
@@ -298,10 +440,9 @@ pub enum ElementType {
     Section(u8),
     Reference,
     Parallel,
-    // Inline,
-    Descriptive,
     Speaker,
     Division(u8),
+    Restore,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
@@ -309,6 +450,7 @@ pub enum ElementType {
 pub enum EmptyType {
     Blank,
     PageBreak,
+    IntroBlank,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]

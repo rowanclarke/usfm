@@ -4,66 +4,123 @@ ws = _{ (sp | lf)* }
 nl = _{ sp* ~ lf ~ ws }
 esc = _{ ws ~ "\\" }
 
-book = _{ (p | pn | q | qn | e | en | id | usfm | ide | sts | c | ca | em)+ }
+book = _{ (esb | tr | pn | p | qn | q | en | e | id | usfm_ver | ide | sts | c | ca | em | periph)+ ~ &EOI }
 
 p = { esc ~ p_style ~ (" " | &nl) ~ p_contents ~ nl }
 pn = { esc ~ pn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
 q = { esc ~ q_style ~ (" " | &nl) ~ p_contents ~ nl }
 qn = { esc ~ qn_style ~ num ~ (" " | &nl) ~ p_contents ~ nl }
 
-e = { esc ~ e_type ~ " " ~ e_contents ~ nl }
-en = { esc ~ en_type ~ num ~ " " ~ e_contents ~ nl }
+e = { esc ~ e_type ~ (" " ~ e_contents)? ~ nl }
+en = { esc ~ en_type ~ num ~ (" " ~ e_contents)? ~ nl }
 id = { esc ~ "id " ~ code ~ (" " ~ e_contents)? ~ nl }
-usfm = { esc ~ "usfm " ~ version ~ nl }
+usfm_ver = { esc ~ "usfm " ~ version ~ nl }
 ide = { esc ~ "ide " ~ encoding ~ nl }
 sts = { esc ~ "sts " ~ num ~ nl }
 c = { esc ~ "c " ~ num ~ nl }
 ca = { esc ~ PUSH("ca") ~ " " ~ num ~ esc ~ POP ~ "*" }
 em = { esc ~ em_type ~ nl }
 
-v = { esc ~ "v " ~ num ~ " " }
+v = { esc ~ "v " ~ verse_num ~ " " }
+verse_num = { ('0'..'9' | 'a'..'z' | 'A'..'Z' | "-")+ }
+
+tr = { esc ~ "tr" ~ (" " | &nl) ~ tr_contents ~ nl }
+tr_contents = _{ (cell | v | unnested)+ }
+cell = { esc ~ cell_prefix ~ num ~ " " ~ cell_contents }
+cell_prefix = { "thr" | "thc" | "th" | "tcr" | "tcc" | "tc" }
+cell_contents = _{ unnested* }
+
+esb = { esc ~ "esb" ~ (" " | &nl) ~ esb_contents ~ esc ~ "esbe" ~ nl }
+esb_contents = _{ (cat | pn | p | qn | q | en | e | tr | em)+ }
+
+periph = { esc ~ "periph " ~ periph_contents ~ nl }
+periph_contents = _{ line ~ ("|" ~ (attrib+ | value))? }
 
 k = { esc ~ PUSH(k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+kn = { esc ~ PUSH(kn_style ~ num) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
 nk = { esc ~ PUSH("+" ~ k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+nkn = { esc ~ PUSH("+" ~ kn_style ~ num) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
 
 f = { esc ~ PUSH(f_style) ~ " " ~ caller ~ " " ~ (esc ~ "fr " ~ reference ~ " ")? ~ f_contents ~ esc ~ POP ~ "*" }
 fe = { esc ~ PUSH(fe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
 x = { esc ~ PUSH(x_style) ~ " " ~ caller ~ " " ~ (esc ~ "xo " ~ reference ~ " ")? ~ x_contents ~ esc ~ POP ~ "*" }
 xe = { esc ~ PUSH(xe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
 
-p_style = { "cls" | "lit" | "mi" | "m" | "nb" | "pc" | "pmc" | "pmo" | "pmr" | "pm" | "po" | "pr" | "p" }
-pn_style = { "ph" | "pi" }
+fig = { esc ~ PUSH("fig") ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+
+milestone = { esc ~ (mn | ms) ~ milestone_attribs? ~ esc ~ "*" }
+mn = { mn_style ~ num ~ "-" ~ dir }
+ms = { ms_style ~ ("-" ~ dir)? }
+mn_style = { "qt" }
+ms_style = { "qt" | "ts" | "t" | "wj" | "vid" }
+dir = { "s" | "e" }
+milestone_attribs = _{ sp* ~ "|" ~ sp* ~ attrib+ }
+
+cat = { esc ~ PUSH("cat") ~ " " ~ line ~ esc ~ POP ~ "*" }
+
+optbreak = { "//" }
+
+p_style = {
+    "cls" | "lit" | "mi" | "m" | "nb" | "pc" | "pmc" | "pmo" | "pmr" | "pm"
+  | "po" | "pr" | "p"
+  | "lh" | "lf"
+  | "d"
+}
+pn_style = { "ph" | "pi" | "mi" | "lim" | "li" }
 q_style = { "qa" | "qc" | "qd" | "qr" }
 qn_style = { "qm" | "q" }
 
-e_type = { "cd" | "cl" | "cp" | "d" | "h" | "ib" | "iex" | "ie" | "imi" | "imq" | "im" | "iot" | "ipi" | "ipq" | "ipr" | "ip" | "mr" | "rem" | "r" | "sp" | "sr" }
+e_type = {
+    "cd" | "cl" | "cp"
+  | "h"
+  | "iex" | "ie" | "ilit" | "imi" | "imq" | "im" | "iot" | "ipc" | "ipi" | "ipq" | "ipr" | "ip"
+  | "mr" | "ms" | "mt" | "rem" | "restore" | "r" | "sp" | "sr" | "s"
+}
 en_type = { "ili" | "imte" | "imt" | "io" | "iq" | "is" | "ms" | "mte" | "mt" | "sd" | "s" | "toca" | "toc" }
-em_type = { "b" | "pb" }
+em_type = { "b" | "pb" | "ib" }
 
-k_style = { "addpn" | "add" | "bdit" | "bd" | "bk" | "dc" | "em" | "ior" | "iqt" | "it" | "jmp" | "k" | "ndx" | "nd" | "no" | "ord" | "png" | "pn" | "pro" | "qac" | "qs" | "qt" | "rb" | "rq" | "sc" | "sig" | "sls" | "sup" | "tl" | "vp" | "wa" | "wg" | "wh" | "wj" | "w" }
+k_style = {
+    "addpn" | "add" | "bdit" | "bd" | "bk" | "dc"
+  | "efm" | "em"
+  | "fv" | "fm"
+  | "ior" | "iqt" | "it"
+  | "jmp" | "k"
+  | "litl" | "lik" | "liv"
+  | "ndx" | "nd" | "no" | "ord"
+  | "png" | "pn" | "pl" | "pro"
+  | "qac" | "qs" | "qt"
+  | "rb" | "ref" | "rq"
+  | "sc" | "sig" | "sls" | "sup"
+  | "ta" | "tl"
+  | "va" | "vp"
+  | "wa" | "wg" | "wh" | "wj" | "wl" | "w"
+  | "xt"
+}
+kn_style = { "liv" }
 
-f_style = { "fe" | "f" }
-fe_style = { "fdc" | "fk" | "fl" | "fm" | "fp" | "fqa" | "fq" | "ft" | "fw" }
-x_style = { "x" }
-xe_style = { "rq" | "xdc" | "xk" | "xnt" | "xop" | "xot" | "xq" | "xta" | "xt" }
+f_style = { "efe" | "fe" | "ef" | "f" }
+fe_style = { "fdc" | "fk" | "fl" | "fm" | "fp" | "fqa" | "fq" | "ft" | "fv" | "fw" }
+x_style = { "ex" | "x" }
+xe_style = { "rq" | "xdc" | "xk" | "xnt" | "xop" | "xot" | "xo" | "xq" | "xta" | "xt" }
 
 p_contents = _{ (nl ~ v | unnested)+ }
 e_contents = _{ unnested+ }
-k_contents = _{ ws ~ nested+ ~ ("|" ~ (attrib+ | value))? }
+k_contents = _{ ws ~ nested* ~ ("|" ~ (attrib+ | default_value))? }
 f_contents = _{ fe+ }
 x_contents = _{ xe+ }
-n_contents = _{ nested+ }
+n_contents = _{ nested* }
 
-unnested = _{ line | k | f | x }
-nested = _{ line | nk }
-line = { (!(nl ~ "\\" | "\\" | "|" | nl ~ EOI) ~ ANY)+ }
-attrib = { name ~ "=\"" ~ value ~ "\"" }
-name = { ('a'..'z' | "-")+ }
+unnested = _{ line | kn | k | nkn | nk | f | x | fig | milestone | cat | optbreak }
+nested = _{ line | nkn | nk | fig | milestone | optbreak }
+line = { (!(nl ~ "\\" | "\\" | "|" | nl ~ EOI | "//") ~ ANY)+ }
+attrib = { sp* ~ name ~ "=\"" ~ value ~ "\"" }
+name = { ('a'..'z' | 'A'..'Z' | "-" | "_")+ }
+default_value = { (!"\\" ~ ANY)+ }
 value = { (!"\"" ~ ANY)* }
 code = { ('A'..'Z' | '0'..'9')+ }
 encoding = { "CP-1252" | "CP-1251" | "UTF-8" | "UTF-16" }
 version = { num ~ ("." ~ num)* }
-caller = { "+" | "-" | "?" } 
+caller = { "+" | "-" | "?" | ('a'..'z') | ('A'..'Z') | ('0'..'9') | "*" }
 num = { ('0'..'9')+ }
 reference = { num ~ sep ~ num }
 sep = { ANY }

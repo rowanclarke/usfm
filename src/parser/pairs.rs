@@ -5,7 +5,7 @@ use pest::{
     iterators::{Pair, Pairs},
 };
 
-pub struct Unpack<'i, R>(Pairs<'i, R>);
+pub struct Unpack<'i, R>(pub Pairs<'i, R>);
 
 impl<'i, R> From<Pairs<'i, R>> for Unpack<'i, R> {
     fn from(value: Pairs<'i, R>) -> Self {
