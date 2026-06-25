@@ -19,7 +19,7 @@ fn assert_web_genesis(genesis: &Book) {
             A::Paragraph(Paragraph{
                 style: Normal,
                 contents: vec![
-                    B::Verse(1),
+                    B::Verse("1".into()),
                     B::Line("In the beginning, God".into()),
                     B::Footnote(Footnote {
                         style: FootnoteStyle::Footnote,
@@ -33,14 +33,14 @@ fn assert_web_genesis(genesis: &Book) {
                             C::Element(NoteElement {
                                 style: Text,
                                 contents: vec![CharacterContents::Line(
-                                    "The Hebrew word rendered “God” is “א\u{5b1}ל\u{5b9}ה\u{5b4}\u{591}ים”\n(Elohim).".into()
+                                    "The Hebrew word rendered \u{201c}God\u{201d} is \u{201c}\u{05d0}\u{05b1}\u{05dc}\u{05b9}\u{05d4}\u{05b4}\u{0591}\u{05d9}\u{05dd}\u{201d}\n(Elohim).".into()
                                 )]
                             })
                         ]
                     }),
                     B::Line(" created the heavens and the earth.".into()),
-                    B::Verse(2),
-                    B::Line("The earth was formless and empty. Darkness was on the surface of the deep and God’s Spirit was hovering over the surface\nof the waters.".into())
+                    B::Verse("2".into()),
+                    B::Line("The earth was formless and empty. Darkness was on the surface of the deep and God\u{2019}s Spirit was hovering over the surface\nof the waters.".into())
                 ]
             })
         ]
@@ -50,7 +50,7 @@ fn assert_web_genesis(genesis: &Book) {
 fn parse_web_genesis() -> Book {
     let file = PathBuf::from(MANIFEST_DIR).join("usfm/02-GENeng-web.usfm");
     let input = read_to_string(file).unwrap();
-    parse(&input)
+    parse(&input).unwrap()
 }
 
 #[test]
@@ -73,6 +73,14 @@ fn parse_webpb_genesis() {
     let file = PathBuf::from(MANIFEST_DIR).join("usfm/02-GENengwebpb.usfm");
     let input = read_to_string(file).unwrap();
 
-    let book = parse(&input);
+    let book = parse(&input).unwrap();
+    println!("{:?}", book.contents);
+}
+
+#[test]
+fn parse_sample() {
+    let file = PathBuf::from(MANIFEST_DIR).join("usfm/sample.usfm");
+    let input = read_to_string(file).unwrap();
+    let book = parse(&input).unwrap();
     println!("{:?}", book.contents);
 }

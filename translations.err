@@ -1,0 +1,275 @@
+Script               Code         File                                     Result
+------------------------------------------------------------------------------------------
+Amheric              amh          46-MATamh.usfm                           FAIL
+    Error:     --> 1091:64
+     |
+1091 | \v 18-20 ኢየሱስም ቀረበና እንዲህ ብሎ ተናገራቸው። ሥልጣን ሁሉ በሰማይና በምድር ተሰጠኝ።
+     |                                                                ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Arabic               fuv          46-MATfuv.usfm                           FAIL
+    Error:   --> 63:2
+   |
+63 | \v 9‏-10 ندٜ ٻٜ نَنِ کٛ لَامِيطٛ اٛنْ وِعِ، سٜيْ ٻٜ نَنْغِ لَاوٛلْ؞ ندٜ ٻٜ نغِعِ حٛودٜرٜ ندٜنْ، ٻٜ نَنِ بٜلْطُمْ نَاع سٜطَّ؞ حٛودٜرٜ ندٜنْ اَرْدِيٻٜ نَاکِ ندٜ دَرِ دٛوْ تٛ ٻِنْغٜلْ نغٜلْ وٛنِ؞
+   |  ^---
+   |
+   = expected numbered milestone style name, milestone style name, character style name, numbered character style name, footnote style (\f, \fe, \ef), or cross-reference style (\x, \ex)
+Bengali              ben          01-INTben2006.usfm                       FAIL
+    Error:    --> 100:64
+    |
+100 | \ip Printed at Brilliant Printers Pvt. Ltd., Bangalore, India
+    |                                                                ^---
+    |
+    = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Burmese              mya          02-GENmya.usfm                           FAIL
+    Error:   --> 26:184
+   |
+26 | \v 2 ကမ္ဘာ​မြေ​ကြီး​သည်​အ​သွင်​သဏ္ဌာန်​ဟူ​၍​မ​ရှိ။ လ​ဟာ​သက်​သက်​ဖြစ်​၏။ သ​မုဒ္ဒ​ရာ​ရေ​ပြင် ကြီး​ကို​မှောင်​အ​တိ​ဖုံး​၍​ရေ​ပြင်​ပေါ်​၌ ဘု​ရား​သ​ခင်​၏​တန်​ခိုး​တော်\f 1 \fr 1:2 \ft * \+fk ဘု​ရား​သ​ခင်​၏​တန်​ခိုး​တော်။ \ft ဘု​ရား​သ​ခင်​၏​တန်​ခိုး​သို့​မ​ဟုတ် ဘု​ရား​သ​ခင်​၏​ဝိ​ညာဉ်​တော်​လှုပ်​ရှား​လျက်​ရှိ​၏။ သို့​မ​ဟုတ်​လေ​ပြင်း​တိုက်​ခတ်​လျက်​ရှိ​၏။ \f* လှုပ်​ရှား​လျက်​ရှိ​၏။-
+   |                                                                                                                                                                                        ^---
+   |
+   = expected character style name or numbered character style name
+CJK                  cmn          02-GENcmn-cu89s.usfm                     FAIL
+    Error:     --> 2106:61
+     |
+2106 | \v 26 \pn 约瑟\pn*死了，正一百一十岁。人用香料将他薰了，把他收殓在棺材里，停在\pn 埃及\pn*。
+     |                                                             ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Code for inherited script vie          02-GENvieovcb.usfm                       FAIL
+    Error:   --> 10:46
+   |
+10 | \v 1 Ban đầu, Đức Chúa Trời\f + \fr 1:1 \ft \xt Gi 1:1-2\f* sáng tạo trời đất.\f + \fr 1:1 \ft \xt Thi 90:2; Ysai 42:5; Công 17:24; Khải 4:11\f*
+   |                                              ^---
+   |
+   = expected numbered milestone style name, milestone style name, or footnote element style (\ft, \fk, \fq, ...)
+Code for uncoded script san          46-MATsanbur.usfm                        FAIL
+    Error:     --> 2176:62
+     |
+2176 | \v 20 ပၑျတ, ဇဂဒန္တံ ယာဝတ် သဒါဟံ ယုၐ္မာဘိး သာကံ တိၐ္ဌာမိ၊ ဣတိ၊
+     |                                                              ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Coptic               cop          46-MATcopbhc.usfm                        FAIL
+    Error:     --> 1132:140
+     |
+1132 | \v 20 ⲈⲢⲈⲦⲈⲚϮⲤⲂⲰ ⲚⲰⲞⲨ ⲈⲀⲢⲈϨ ⲈϨⲰⲂ ⲚⲒⲂⲈⲚ ⲈⲦⲀⲒϨⲈⲚϨⲈⲚ ⲐⲎⲚⲞⲨ ⲈⲢⲰⲞⲨ ⲞⲨⲞϨ ⲒⲤ ϨⲎⲠⲠⲈ ⲀⲚⲞⲔ ϮⲬⲎ ⲚⲈⲘⲰⲦⲈⲚ ⲚⲚⲒⲈϨⲞⲞⲨ ⲦⲎⲢⲞⲨ ϢⲀ ⲠϪⲰⲔ ⲈⲂⲞⲖ ⲚⲦⲈⲚⲒⲈⲚⲈϨ ⲀⲘⲎⲚ.
+     |                                                                                                                                            ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Cyrillic             bel          02-GENbel.usfm                           FAIL
+    Error:     --> 3171:100
+     |
+3171 | \v 26  I памёр Язэп, маючы сто дзесяць гадоў. I забальзамавалі яго, і палажылі ў дамавіну ў Эгіпце.
+     |                                                                                                    ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Devanagari           hne          02-GENhne.usfm                           FAIL
+    Error:    --> 275:93
+    |
+275 | \v 2 त परमेसर के बेटामन\f + \fr 6:2 \fq परमेसर के बेटामन \ft इबरानी म \fqa स्वरगदूतमन\ft ; \xt अयू 1:6; 2:1\ft ; \xt भजन 29:1; 89:6\ft ; \xt दानि 3:25\xt 2 पत 2:4‑5\ft ; \xt यहू 6\f* देखिन कि मनखे के बेटीमन सुघर हें अऊ ओमन जे-जे ला पसंद करिन, तेमन ले बिहाव कर लीन।
+    |                                                                                             ^---
+    |
+    = expected numbered milestone style name, milestone style name, or footnote element style (\ft, \fk, \fq, ...)
+Devanagari (Nagari)  lif          46-MATlifNT2.usfm                        FAIL
+    Error:     --> 1894:195
+     |
+1894 | \v 20 इङ्‌गाॽ इङ्‌जाःङ् पिनिङ्‌बा के़रे़क् पाःन्‍हाॽ इःप्‍मा नाःप्‍मा हुॽरे़म्‍सिम्‍मे़ॽओ॥ ओमे़त्ते़म्‍मे़ॽओ, इङ्‌गाॽग इक्‍सादिङ् खाम्‍बेःक्‍माल्‍ले़ कुनुप्‍मो थारिक्‍के खिनिॽनु सदादिङ् वाॽआरो॥”
+     |                                                                                                                                                                                                   ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Ethiopic             mdy          02-GENmdyeth.usfm                        FAIL
+    Error:    --> 214:110
+    |
+214 | \v 25 ዓዳኣሜኮ ማቻ ሃሣ ላሚ ጎጳዻዖ ዓቲንቄ ናይ ሾዔኔ፤ ዒዛኣ፦ «ቃኣዔኤሌ ዎዼ፥ ዓኣቤኤሌ ቤዛ ፆኦሲ ታኣም ዓቲንቄ ናይ ዒንጌኔ» ጋዓዖ ዒዛኮ ሱንፆ «ሴኤቴ»\f + \fr 4፡25\fq ሴኤቴ \ft ጌይፃ፦ ዔብሬ ዓሶ ሙኡቺና «ዒንጌኔ» ጌይሢኬ።\f* ጌዒ ጌሤኔ።
+    |                                                                                                              ^---
+    |
+    = expected footnote element style (\ft, \fk, \fq, ...)
+Ethiopic (Geʻez)     gof          46-MATgofENT.usfm                        FAIL
+    Error:     --> 1984:83
+     |
+1984 | \v 20 ታኒ ሂንቴና ኪቲዳባ ኡባ ኤንቲ ናጋና ሜላ ኤንታ ታማርሲቴ። ታኒ ዎዲያ ዉርሴ ጋካናው ኡባ ዎዴ ሂንቴራ ዴዓይስ» ያጊስ።
+     |                                                                                   ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Gujarati             san          46-MATsanguj.usfm                        FAIL
+    Error:  --> 9:83
+  |
+9 | \v 1 ઇબ્રાહીમઃ સન્તાનો દાયૂદ્ તસ્ય સન્તાનો યીશુખ્રીષ્ટસ્તસ્ય પૂર્વ્વપુરુષવંશશ્રેણી|
+  |                                                                                   ^---
+  |
+  = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Gurmukhi             pan          02-GENpan.usfm                           FAIL
+    Error:     --> 1838:125
+     |
+1838 | \v 26 ਯੂਸੁਫ਼ ਇੱਕ ਸੌ ਦਸ ਸਾਲਾਂ ਦਾ ਹੋ ਕੇ ਮਰ ਗਿਆ ਅਤੇ ਉਨ੍ਹਾਂ ਨੇ ਉਸ ਵਿੱਚ ਸੁਗੰਧੀਆਂ ਭਰੀਆਂ ਅਤੇ ਉਹ ਮਿਸਰ ਵਿੱਚ ਇੱਕ ਤਾਬੂਤ ਵਿੱਚ ਰੱਖਿਆ ਗਿਆ।
+     |                                                                                                                             ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Han (Simplified variant) cmn          46-MATcmnfeb.usfm                        FAIL
+    Error:     --> 1496:48
+     |
+1496 | \v 20 我向你们教导的一切，都要教导他们遵守。记住，我始终与你们同在，直到这世界的终结。”
+     |                                                ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Han (Traditional Variant) gwr          02-GENgwr.usfm                           FAIL
+    Error:     --> 2592:143
+     |
+2592 | \v 26 Kale oYusufu nʼafeera omu Misiri, nga wʼemyanka 110. Era owebamalire okukola oku mulambogwe okutavunda mangu, ni baguteeka omu sanduuku.
+     |                                                                                                                                               ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Hebrew               hbo          02-GENhbo.usfm                           FAIL
+    Error:     --> 1638:117
+     |
+1638 | \v 26 וַיָּ֣מָת יֹוסֵ֔ף בֶּן־מֵאָ֥ה וָעֶ֖שֶׂר שָׁנִ֑ים וַיַּחַנְט֣וּ אֹתֹ֔ו וַיִּ֥ישֶׂם בָּאָרֹ֖ון בְּמִצְרָֽיִם׃
+     |                                                                                                                     ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Hindi                hin          02-GENhin2010.usfm                       FAIL
+    Error:    --> 197:24
+    |
+197 | \v 3-4 फसल के समय\f + \fr 4:3-4 \fk फसल के समय \ft इसका अर्थ फसल काटने का समय। या कुछ निश्चित समय के बाद भी हो सकता है।\f* कैन एक भेंट यहोवा के पास लाया। जो अन्न कैन ने अपनी ज़मीन में उपजाया था उसमें से थोड़ा अन्न वह लाया। परन्तु हाबिल अपने जानवरों के झुण्ड में से कुछ जानवर लाया। हाबिल अपनी सबसे अच्छी भेड़ का सबसे अच्छा हिस्सा लाया।\f + \fr 4:3-4 \fk अच्छा हिस्सा लाया \ft शाब्दिक उसकी चर्बी। यह जानवर का वह हिस्सा था जो हमेशा परमेश्वर के लिये बचाया जाता था। जब यह वेदी पर जलाया जाता था तो उसमें से बहुत मनभावनी सुगन्ध निकलती थी।\f*
+    |                        ^---
+    |
+    = expected footnote element style (\ft, \fk, \fq, ...)
+Kannada              san          46-MATsankan.usfm                        FAIL
+    Error:  --> 9:83
+  |
+9 | \v 1 ಇಬ್ರಾಹೀಮಃ ಸನ್ತಾನೋ ದಾಯೂದ್ ತಸ್ಯ ಸನ್ತಾನೋ ಯೀಶುಖ್ರೀಷ್ಟಸ್ತಸ್ಯ ಪೂರ್ವ್ವಪುರುಷವಂಶಶ್ರೇಣೀ|
+  |                                                                                   ^---
+  |
+  = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Kayah Li             kyu          02-GENkyuk.usfm                          FAIL
+    Error:     --> 2581:282
+     |
+2581 | \v 26 ꤖꤢꤧ꤭ꤡꤛꤥꤎꤢꤧ ꤔꤢ꤬ ꤥ꤬ ꤟꤢꤪ ꤒꤣ꤬ꤐꤟꤢꤧ꤬ ꤔꤢ ꤏꤛꤢꤩ ꤚꤢꤪ ꤢ꤬ ꤞꤛꤢꤩ꤭ꤊꤛꤢ꤭꤯ ꤓꤌꤣ꤭ꤚꤢꤪ ꤞꤛꤢꤖꤢꤨ ꤖꤢꤧ꤭ꤡꤛꤥꤎꤢꤧ ꤢ꤬ꤜꤟꤌꤣ꤭ꤒꤟꤥ꤬ ꤊꤟꤢꤦꤞꤢꤪ꤭ꤊꤟꤢꤦꤜꤟꤢꤪ꤬ ꤒꤥ꤬ ꤢ꤬ꤑꤢꤩ꤭ꤔꤌꤣ꤬, ꤢꤨ꤭ ꤙꤢꤩ꤬ꤔꤟꤌꤣ꤭ ꤒꤟꤢꤧ꤬ꤋꤢꤨ꤬ꤒꤟꤢꤧ꤬ꤒꤟꤛꤢꤩ ꤘꤣ ꤢ꤬ꤔꤟꤌꤣ꤬ꤗꤢꤦ ꤔꤌꤣ꤬ꤒꤢ꤬ꤟꤢꤩ꤬ ꤘꤣ ꤜꤢꤨ꤭ꤜꤟꤌꤣ꤭ꤒꤟꤥ꤬ꤊꤢꤨ꤭, ꤓꤌꤣ꤭ꤚꤢꤪ ꤢꤨ꤭ ꤙꤢꤩ꤬ꤔꤟꤌꤣ꤭ꤊꤛꤢ꤭ ꤜꤢꤨ꤭ ꤘꤣ ꤜꤥ꤭ꤊꤢꤨ꤭ ꤙꤤ ꤤ꤬ꤡꤛꤤꤊꤟꤢꤩꤊꤢꤨ꤭ ꤔꤌꤣ꤬꤯
+     |                                                                                                                                                                                                                                                                                          ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Khmer                cmo          02-GENcmok.usfm                          FAIL
+    Error:   --> 79:78
+   |
+79 | \v 7 ជេសរី​\pn ឞ្រាស​យេហោវា \pn*​ឆ៝ៈ​នែស​មោយ​ជាន​ម៝ន​ទូ​ហ្វេ​ឞូនុយ្ស\f + \fr ២:៧៖ \ft តា​នាវ​ងើយ​\+pn ហេឞ្រើ\+pn*​ឞូនុយ្ស​លាស​«\+pn អាដាម់ \+pn*» នែស​លាស​«\+pn អាដាមា\+pn*»។ ជេសរី​«\+pn អាដាម់ \+pn*»​ជេង​រាញា​ឞូនុយ្ស​ត៝ល់​ង្វាយ​ដ៝ង់។\f*\nd ពាង់\nd*​ខោម​នហ៝ម់​លាប់​រ៝ៈ​ត្រោម​មុស​ឞូនុយ្ស​អី​នៃ ជេសរី​គែស​នហ៝ម់​គែស​ឆ្វាន ជេង​រេស​ប្លឺ​នទ្រី​ពាង់​ហែស។\x * \xo ២:៧៖ \xt ៣:១៩; យោប ៣៤:១៤-១៥; នម ១៣៩:១៣-១៦; ១កោ ១៥:៤៥-៤៩\x*
+   |                                                                              ^---
+   |
+   = expected number
+Lao                  ncq          21-PROncq.usfm                           FAIL
+    Error:    --> 439:42
+    |
+439 | \q2 ອຶນໂຈຍ ບິ ກະ ມັນແຊມ ການໍ່ອ໌.\f + \fr \ft ເບີນ ເນົ່າ ອາຕີ ຣານາ ໄນ່ ປາຍ: ‘ແຕີ່ອ໌ ມັຮ ກອນ ໄມ່ ປື່ດ ອາຊັອຮ, ດໍອ໌ ໂອນ ໄລ່ ຣາຈ່ອຍ ໄມ່, ຕາ ແກີນ ກວາຍ ການໍ່ອ໌.’\f*
+    |                                          ^---
+    |
+    = expected number
+Latin                eng          02-GENengylt.usfm                        FAIL
+    Error:     --> 1639:121
+     |
+1639 | \v 26 And Joseph dieth, a son of an hundred and ten years, and they embalm him, and he is put into a coffin in Egypt.
+     |                                                                                                                         ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Latin (Roman) with Papua New Guinea enhancements geb          46-MATgeb.usfm                           FAIL
+    Error:    --> 973:477
+    |
+973 | \v 20-21 \x - \xo 17:20-21 \xt Mt 21.21; Mk 11.23; Ru 17.6; 1 Ko 12.9; 13.2\x*Zisas mbara khaŋ mbe nzuai, “Nde na khothɨgi ndɨkndɨk guigira bisaŋgi. Nde maaŋ muuŋgiap tuktɨgi fhuvara. Gu guigira nde nzuai, nde maaŋ muuŋgip na khothɨgi ndɨkndɨk, ana mbe kha zɨn rɨgi mpampara vhɨgar farar muuŋgirga, mastet. Nde maaŋ muuŋgip nde khaŋ mbu mbɨkshɨma suanga, ‘Ndu khavgip, khaŋ thav mbugu ŋgɨ.’ Nde maaŋ suanga, ana ŋgɨrga. Nde vhɨra muungeŋ tuktɨgi fhuv ŋaara the ki fhu.” \f a \fr 17:20-21 \ft Mbe bigi kaŋgi gumgi mbari kha ndɨkndɨga mbui, buna mueŋ phorga kha vezar ki. Mba kameŋ khaŋ muuŋgi, “Fhe Bakɨme phorga nzuav mba thamthagi tɨvar, mba ŋina mbatɨga vhararga tuktɨgi, harigi tuav the ki fhuvara.” \f*
+    |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ^---
+    |
+    = expected footnote element style (\ft, \fk, \fq, ...)
+Malayalam            mal          02-GENmal.usfm                           FAIL
+    Error:     --> 2458:120
+     |
+2458 | \v 26 യോസേഫ് നൂറ്റിപ്പത്തു വയസ്സുള്ളവനായി മരിച്ചു. അവർ അവനു സുഗന്ധവർഗ്ഗം ഇട്ടു അവനെ മിസ്രയീമിൽ ഒരു ശവപ്പെട്ടിയിൽ വച്ചു.
+     |                                                                                                                        ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Nepali               npi          02-GENnpi2010.usfm                       FAIL
+    Error:     --> 2737:156
+     |
+2737 | \v 26 यूसुफ जब एक सय दश वर्ष पुगेपछि तिनको मृत्यु भयो। अन्तिम संस्कारको निम्ति वैद्यहरूले तिनको लाश तयार पारे अनि तिनको शरीरलाई मिश्रमा एउटा कफनमा राखे।
+     |                                                                                                                                                            ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Oriya                san          46-MATsanori.usfm                        FAIL
+    Error:  --> 9:83
+  |
+9 | \v 1 ଇବ୍ରାହୀମଃ ସନ୍ତାନୋ ଦାଯୂଦ୍ ତସ୍ୟ ସନ୍ତାନୋ ଯୀଶୁଖ୍ରୀଷ୍ଟସ୍ତସ୍ୟ ପୂର୍ୱ୍ୱପୁରୁଷୱଂଶଶ୍ରେଣୀ|
+  |                                                                                   ^---
+  |
+  = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Syloti Nagri         syl          02-GENsyls.usfm                          FAIL
+    Error:     --> 2076:134
+     |
+2076 | \v 26 ꠢꠦꠡꠦ ꠄꠇ-ꠡ ꠖꠡ ꠛꠞꠍ ꠛꠄꠅꠡꠅ ꠁꠃꠍꠥꠚ ꠝꠣꠞꠣ ꠉꠦꠟꠣ। ꠔꠦꠃ ꠝꠣꠘꠡꠦ ꠔꠣꠘ ꠟꠣꠡꠞꠦ ꠈꠥꠡꠛꠥ-ꠝꠡꠟꠣꠖꠤ ꠝꠣꠈꠤꠀ ꠝꠝꠤ ꠛꠣꠘꠣꠁꠀ ꠝꠤꠡꠞ ꠖꠦꠡꠅ ꠄꠇ ꠇꠣꠚꠘꠞ ꠛꠣꠇ꠆ꠡꠞ ꠜꠤꠔꠞꠦ ꠕꠁꠟꠣ॥
+     |                                                                                                                                      ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Syriac               aii          20-PSAaii.usfm                           FAIL
+    Error:     --> 8142:16
+     |
+8142 | \q1 ܗܲܠܸܠܘܼܝܵܐ.
+     |                ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Tamil                tam          02-GENtam2008.usfm                       FAIL
+    Error:     --> 2699:167
+     |
+2699 | \v 26 யோசேப்பு எகிப்திலேயே மரணமடைந்தான். அப்போது அவனுக்கு 110 வயது. மருத்துவர்கள் அவனது உடலை அடக்கம் செய்வதற்காகத் தயார் செய்தனர். அதனை ஒரு பெட்டியில் வைத்தார்கள்.
+     |                                                                                                                                                                       ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Telugu               key          46-MATkey.usfm                           FAIL
+    Error:     --> 1729:206
+     |
+1729 | \v 20 అన్నె, ఆఁవ్ తుమ్‍క కిచ్చొ కిచ్చొ సంగ బోదన కెర అస్సి గే, జా ఎత్కి జేఁవ్ నంపజతసక కి సంగ బోదన కెర. ఈందె, ఉగుమ్ పూర్తి జతె ఎదక కి, కెఁయఁక తెఁయఁక తుమ్‍చి తెన్ ఆఁవ్ తోడ్ అస్సి” మెన యేసు సిస్సుల్‍క సంగిలన్.
+     |                                                                                                                                                                                                              ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Thaana               div          02-GENdiv.usfm                           FAIL
+    Error:   --> 92:2
+   |
+92 | \v 4‏-5 މިއީ އުޑުތަކާއި ދުނިޔެ އުފެއްދެވި ގޮތުގެ ވާހަކައެވެ. މަތިވެރި ރަސްކަލާނގެ، އެކަލާނގެ ދުނިޔެއާއި އުޑުތައް އުފެއްދެވިއިރު ގޮވާން އަޅާ ގަސްތަކެއް ހުރި ދަނޑެއް، ނުވަތަ ދަނޑެއްގައި ހައްދާ ކަހަލަ ގަސްތަކެއް ވެސް އަދި ދުނިޔޭގެ ތަނަކު ނުވެއެވެ. މަތިވެރިރަސްކަލާނގެ އޭރަކު ދުނިޔެއަށް ވިއްސާރައެއް ވެސް ނުފޮނުއްވައެވެ. އަދި ދުނިޔޭގެ ބިމަކު ދަނޑެއް އެއްޗެއް ހައްދާނެ އިންސާނަކު ވެސް ނުމެނެތް މެއެވެ.
+   |  ^---
+   |
+   = expected numbered milestone style name, milestone style name, character style name, numbered character style name, footnote style (\f, \fe, \ef), or cross-reference style (\x, \ex)
+Thai                 lcp          02-GENlcp.usfm                           FAIL
+    Error:     --> 2289:151
+     |
+2289 | \v 26 ฟวยจ เซ โยเซป ยุม. อาญุ อื ไก ติ รอย ไม่ กาว เนอึม. โม เซ ฮาวม อื นึง เยื่อ โอ เกือฮ ป ยุม เซ เกียฮ ซเออึม. อาึง อื โตะ โคะ โลง นึง เมือง อียิป.
+     |                                                                                                                                                       ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Tibetan              bod          46-MATbod.usfm                           FAIL
+    Error:     --> 1538:151
+     |
+1538 | \v 20 ངས་ཁྱེད་ཚོར་བཀའ་བསྒོས་པ་ཐམས་ཅད་སྲུང་དགོས་པར་སློབས་ཤིག ཉོན་དང༌། ང་ནི་ནམ་ཡང་ཁྱེད་ཚོ་དང་མཉམ་དུ་གནས། དུས་ཀྱི་མཐའ་མའི་བར་དུའང་ཡོད་དོ་”ཞེས་གསུངས་སོ། །
+     |                                                                                                                                                       ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Tifenagh             rif          02-GENrift.usfm                          FAIL
+    Error:   --> 10:57
+   |
+10 | \v 1 ⴷⴻⴳ ⵓⵎⴻⵣⵡⴰⵔⵓ ⵉⵅⵍⴻⵇ-ⴷⴷ ⴰⵔⴻⴱⴱⵉ ⵉⵊⴻⵏⵡⴰⵏ ⴷ ⵜⴻⵎⵎⵓⵔⵜ. \x ◘ \xo 1:1 \xt ⴰⵢⵓⴱ 38:4; ⵉⵥⵀⴷ. 33:6; 89:12; 136:5; ⵍⴻⵅ. 14:15; 17:24; ⵄⴱⵔ. 11:3; \x*
+   |                                                         ^---
+   |
+   = expected note caller (+, -, or character)
+Tifinagh             ttq          46-MATttqt.usfm                          FAIL
+    Error:     --> 1589:76
+     |
+1589 | \v 20 ⵙⵙⵗⵔⵓⵜⵏ ⵍⴾⵎ ⵢⵔⵜⵏ ⴾⵍ ⵓⵏ ⵙ ⴾⵓⵏⵎⵔⴰ⵰ ⵏⴾ ⵎⵔⵏ ⵙⵏⵜ ⵙ ⵍ ⵗⵔⵓⵏ ⴼⵓ ⵂⵔ ⵗⵔⴹ ⵏⴹⵏⵜ⵰»
+     |                                                                            ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+Unified Canadian Aboriginal Syllabics crj          46-MATcrj.usfm                           FAIL
+    Error:     --> 1854:89
+     |
+1854 | \v 20 ᑲᔦ ᒉ ᒋᔅᑯᑕᒧᐌᑯᒡ ᒉᒌ ᓇᓂᐦᐄᐦᑕᐦᒀᐤ ᒥᓯᐌ ᑖᓐ ᑳ ᐃᑕᔓᒥᑕᑯᒡ᙮ ᒨᔥ ᒫᒃ ᒋᑲ ᐐᒉᐅᑎᓈᐙᐤ ᐲᐦᐄᒻ ᐊᑎ ᐃᔅᒀᐸᔨᐦᒉ ᐊᔅᒌ᙮
+     |                                                                                         ^---
+     |
+     = expected character style (\style ...\style*), numbered character style (\style1 ...\style1*), nested character style (\+style ...\+style*), nested numbered character style (\+style1 ...\+style1*), footnote (\f ...\f*), cross-reference (\x ...\x*), figure (\fig ...\fig*), milestone (\style\*), category (\cat ...\cat*), optional break (//), or text
+
+Summary: 0 passed, 38 failed out of 38 total
+
+thread 'parse_sample_translations' (2858136) panicked at tests/translations.rs:116:9:
+38 of 38 translations failed to parse
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test parse_sample_translations ... FAILED

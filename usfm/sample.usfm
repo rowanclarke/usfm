@@ -1,0 +1,130 @@
+\id GEN Comprehensive USFM 3.1.1 Sample
+\usfm 3.0
+\ide UTF-8
+\sts 1
+\rem This file exercises every feature from the USFM 3.1.1 specification.
+\h Genesis
+\toc1 The First Book of Moses
+\toc2 Genesis
+\toc3 Gen
+\toca1 Bereshit
+\cl Chapter
+\imt1 Introduction to Genesis
+\imte1 End of Introduction Title
+\is1 About This Book
+\ip This is an introduction paragraph with \ior 1:1-2:3\ior* outlined references.
+\ipi This is an indented introduction paragraph.
+\im This is a margin introduction paragraph.
+\imi This is a margin indented introduction paragraph.
+\ipq This is a quoted introduction paragraph.
+\imq This is a margin quoted introduction paragraph.
+\ipr This is a right-aligned introduction paragraph.
+\ipc This is a centered introduction paragraph.
+\ib
+\iot Outline of Contents
+\io1 Creation of the world \ior 1:1-2:3\ior*
+\io1 The Garden of Eden \ior 2:4-25\ior*
+\iq1 In the beginning was the Word, \iqt and the Word was God\iqt*.
+\ili1 This is an introduction list item.
+\iex Bridge content between introduction and body.
+\ie
+\mt1 GENESIS
+\mt2 The First Book of Moses
+\mte1 End of Genesis
+\ms1 Part One: Creation
+\mr 1:1--2:25
+\s1 The Beginning
+\s2 Day One
+\sr 1:1-5
+\r (Psalm 104:1-35; John 1:1-5)
+\d A Psalm of David.
+\sp The Narrator
+\sd1
+\cp I
+\cd A description of the chapter contents.
+\c 1
+\ca 2\ca*
+\p
+\v 1 \va 2\va*\vp A\vp* In the beginning, God\f + \fr 1:1 \fk God \ft The Hebrew word rendered "God" is Elohim.\fl a \fq In the beginning \fqa Or: When God began to create \fdc Deutero text \fm * \fp A footnote paragraph. \fw Witness text \fv 1\fv*\f* created the heavens and the earth.\x + \xo 1:1 \xt Psalm 104:1; John 1:1 \xk creation \xq In the beginning \xot Gen 2:4 \xnt John 1:1 \xdc Sir 1:1 \xta (added) \xop 1:1a \rq Ps 104:1\rq*\x*
+\v 2 The earth was \add formless\add* and \bk empty\bk*. \nd God\nd*'s \wj words of Jesus\wj* were \bd bold\bd* and \it italic\it* and \bdit bold italic\bdit* and \sc small caps\sc* and \sup superscript\sup* text.
+\v 3 And God said, \qt "Let there be light,"\qt* and there was light.
+\p
+\v 4 God saw that the light was good, and he separated the light from the darkness.\fe + \fr 1:4 \ft This is an endnote about separation.\fe*
+\v 5 God called the light \k "day"\k*, and the darkness he called \pn Night\pn*. And there was \ord 1st\ord* evening.
+\m
+\v 6 And God said, \sig "Let there be a vault"\sig* between the waters.
+\mi
+\v 7 So God made the \tl firmamentum\tl* and separated the water.
+\pc
+\v 8 God called the vault \pro shamayim\pro* "\w sky|lemma="heaven" strong="H8064"\w*."
+\nb
+\v 9 And \w water|waters\w* gathered to \jmp one place|href="http://example.com"\jmp*.
+\cls Amen.
+\lit Selah
+\pmo
+\v 10 God called the dry ground \em "land"\em*, and the \dc gathered\dc* waters he called "seas."
+\pm
+\v 11 Then God said, \+bd \+it nested bold italic\+it*\+bd* in regular text.
+\pmc
+\v 12 The land produced vegetation: \png Babylon\png* and \addpn Abram\addpn*.
+\pmr
+\v 13 And there was evening, and there was morning—the third day.
+\po
+\v 14 And God said, \sls secondary language text\sls*.
+\pr
+\v 15 God made two great lights \ndx index entry\ndx*.
+\pi1
+\v 16 First indented paragraph content.
+\pi2
+\v 17 Second indented paragraph content.
+\ph1
+\v 18 Hanging indent paragraph content.
+\b
+\q1
+\v 19 Poetry line one,
+\q2 indented poetry line two.
+\qm1 embedded poetry line.
+\qa Acrostic Heading (Aleph)
+\qc Centered poetry line.
+\qd A musical direction.
+\qr Right-aligned poetry.
+\q1
+\v 20 Let the waters bring forth \qs Selah\qs* creatures, \qac A\qac*-bundantly.
+\q1
+\v 21 \rb base text|gloss="annotation"\rb* and ruby text.
+\lh List Header
+\li1 First list item with \lik keyword\lik* and \litl title\litl*.
+\li2 Second level list item.
+\lim1 Embedded list item.
+\lf List footer
+\li1 Third item with \liv1 value\liv1*.
+\tr \th1 Column 1 \th2 Column 2
+\tr \thr1 Right Header \thc1 Center Header
+\tr \tc1 Cell 1 \tc2 Cell 2
+\tr \tcr1 Right Cell \tcc1 Center Cell
+\p
+\v 22 And God blessed them.\fig A dove over the waters|src="creation.jpg" size="col" ref="1.22"\fig*
+\esb \cat History\cat*
+\ms Sidebar: Ancient Near Eastern Context
+\p Ancient creation narratives often share common themes with the Genesis account.
+\esbe
+\p
+\v 23 And there was evening, and there was morning—\ef + \fr 1:23 \ft Extended footnote about the fifth day.\ef* the fifth day.
+\v 24 And God said,\ex + \xo 1:24 \xt Extended cross reference.\ex* "Let the land produce living creatures."
+\p
+\v 25 God made the wild animals. \cat People\cat*
+\v 26 Then God said, \ref Gen 1:27\ref* "Let us make mankind in our image."
+\qt1-s\*
+\p
+\v 27 So God created mankind in his own image.
+\qt1-e\*
+\ts-s\*
+\p
+\v 28 God blessed them and said to them, "Be fruitful // and increase in number."
+\ts-e\*
+\v 29 Then God said, "I give you every seed-bearing plant."
+\v 30 And it was so.
+\v 31 God saw all that he had made, and it was very good.
+\pb
+\periph Title Page
+\p Front matter content for the title page.
