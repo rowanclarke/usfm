@@ -11,7 +11,7 @@ pub fn parse(input: &str) -> Result<Book, String> {
     let parsed = UsfmParser::parse(Rule::book, input)
         .map_err(|e| {
             e.renamed_rules(|rule| match rule {
-                Rule::line => "text".into(),
+                Rule::line | Rule::text => "text".into(),
                 Rule::k => "character style (\\style ...\\style*)".into(),
                 Rule::kn => "numbered character style (\\style1 ...\\style1*)".into(),
                 Rule::nk => "nested character style (\\+style ...\\+style*)".into(),

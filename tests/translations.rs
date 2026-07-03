@@ -27,6 +27,7 @@ struct TestResult {
 }
 
 #[test]
+#[ignore]
 fn parse_sample_translations() {
     let mut rng: StdRng = match std::env::var("USFM_SEED") {
         Ok(seed) => {

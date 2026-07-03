@@ -8,8 +8,7 @@ static MANIFEST_DIR: &str = env!("CARGO_MANIFEST_DIR");
 fn assert_web_genesis(genesis: &Book) {
     use BookContents as A;
     use Caller::Auto;
-    use FootnoteElement as C;
-    use FootnoteElementStyle::Text;
+    use FootnoteElementStyle::{Reference, Text};
     use ParagraphContents as B;
     use ParagraphStyle::Normal;
     assert_eq!(
@@ -25,17 +24,16 @@ fn assert_web_genesis(genesis: &Book) {
                         style: FootnoteStyle::Footnote,
                         caller: Auto,
                         elements: vec![
-                            C::Reference(NoteReference {
-                                chapter: 1,
-                                separator: ':',
-                                verse: 1
-                            }),
-                            C::Element(NoteElement {
+                            FootnoteElement {
+                                style: Reference,
+                                contents: vec![CharacterContents::Line("1:1  ".into())]
+                            },
+                            FootnoteElement {
                                 style: Text,
                                 contents: vec![CharacterContents::Line(
                                     "The Hebrew word rendered \u{201c}God\u{201d} is \u{201c}\u{05d0}\u{05b1}\u{05dc}\u{05b9}\u{05d4}\u{05b4}\u{0591}\u{05d9}\u{05dd}\u{201d}\n(Elohim).".into()
                                 )]
-                            })
+                            }
                         ]
                     }),
                     B::Line(" created the heavens and the earth.".into()),

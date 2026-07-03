@@ -65,7 +65,7 @@ pub fn to_book_contents(pair: Pair<Rule>) -> BookContents {
 pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
     use ParagraphContents as C;
     let rule = pair.as_rule();
-    if rule == Rule::line {
+    if rule == Rule::line || rule == Rule::text {
         return C::Line(pair.as_str().to_string());
     }
     if rule == Rule::optbreak {
@@ -115,7 +115,7 @@ pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
 pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
     use ElementContents as C;
     let rule = pair.as_rule();
-    if rule == Rule::line {
+    if rule == Rule::line || rule == Rule::text {
         return C::Line(pair.as_str().to_string());
     }
     if rule == Rule::optbreak {
@@ -199,37 +199,19 @@ pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
 }
 
 pub fn to_footnote_element(pair: Pair<Rule>) -> FootnoteElement {
-    use FootnoteElement as C;
-    let rule = pair.as_rule();
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
-    if rule == Rule::reference {
-        return C::Reference(NoteReference {
-            chapter: pairs.next_value(),
-            separator: pairs.next_char(),
-            verse: pairs.next_value(),
-        });
-    }
-    C::Element(NoteElement {
+    FootnoteElement {
         style: to_footnote_element_style(pairs.next_str()),
         contents: pairs.map(to_character_contents),
-    })
+    }
 }
 
 pub fn to_cross_ref_element(pair: Pair<Rule>) -> CrossRefElement {
-    use CrossRefElement as C;
-    let rule = pair.as_rule();
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
-    if rule == Rule::reference {
-        return C::Reference(NoteReference {
-            chapter: pairs.next_value(),
-            separator: pairs.next_char(),
-            verse: pairs.next_value(),
-        });
-    }
-    C::Element(NoteElement {
+    CrossRefElement {
         style: to_cross_ref_element_style(pairs.next_str()),
         contents: pairs.map(to_character_contents),
-    })
+    }
 }
 
 pub fn to_attribute(pair: Pair<Rule>) -> (String, String) {
@@ -606,8 +588,8 @@ pub fn to_footnote_element_style(s: &str) -> FootnoteElementStyle {
         "fp" => Paragraph,
         "ft" => Text,
         "fdc" => DeuteroText,
-        "fm" => ReferenceMark,
         "fv" => Verse,
+        "fr" => Reference,
         _ => panic!("Unknown footnote element style: {:?}", s),
     }
 }

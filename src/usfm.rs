@@ -1,7 +1,6 @@
 mod identifier;
 
 use rkyv::{Archive, Deserialize, Serialize};
-use std::{cmp, fmt, hash};
 
 #[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
 #[rkyv(derive(Debug, PartialEq, Eq, Hash))]
@@ -67,19 +66,6 @@ pub enum CharacterContents {
     OptionalBreak,
 }
 
-#[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
-#[rkyv(derive(Debug, PartialEq, Eq, Hash))]
-pub enum FootnoteElement {
-    Reference(NoteReference),
-    Element(NoteElement<FootnoteElementStyle>),
-}
-
-#[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
-#[rkyv(derive(Debug, PartialEq, Eq, Hash))]
-pub enum CrossRefElement {
-    Reference(NoteReference),
-    Element(NoteElement<CrossRefElementStyle>),
-}
 
 #[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
 #[rkyv(derive(Debug, PartialEq, Eq, Hash))]
@@ -140,10 +126,21 @@ pub struct CrossRef {
 
 #[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
 #[rkyv(derive(Debug, PartialEq, Eq, Hash))]
-pub struct NoteReference {
-    pub chapter: u16,
-    pub separator: char,
-    pub verse: u16,
+#[rkyv(serialize_bounds(
+    __S: rkyv::ser::Writer + rkyv::ser::Allocator,
+    __S::Error: rkyv::rancor::Source,
+))]
+#[rkyv(deserialize_bounds(__D::Error: rkyv::rancor::Source))]
+#[rkyv(bytecheck(
+    bounds(
+        __C: rkyv::validation::ArchiveContext,
+        __C::Error: rkyv::rancor::Source,
+    )
+))]
+pub struct FootnoteElement {
+    pub style: FootnoteElementStyle,
+    #[rkyv(omit_bounds)]
+    pub contents: Vec<CharacterContents>,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
@@ -159,11 +156,8 @@ pub struct NoteReference {
         __C::Error: rkyv::rancor::Source,
     )
 ))]
-pub struct NoteElement<NoteStyle: Archive>
-where
-    <NoteStyle as Archive>::Archived: fmt::Debug + cmp::Eq + hash::Hash,
-{
-    pub style: NoteStyle,
+pub struct CrossRefElement {
+    pub style: CrossRefElementStyle,
     #[rkyv(omit_bounds)]
     pub contents: Vec<CharacterContents>,
 }
@@ -271,7 +265,6 @@ pub enum FootnoteElementStyle {
     Paragraph,
     Text,
     DeuteroText,
-    ReferenceMark,
     Verse,
 }
 
