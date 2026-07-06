@@ -65,7 +65,7 @@ pub fn to_book_contents(pair: Pair<Rule>) -> BookContents {
 pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
     use ParagraphContents as C;
     let rule = pair.as_rule();
-    if rule == Rule::line || rule == Rule::text {
+    if rule == Rule::ntext || rule == Rule::text {
         return C::Line(pair.as_str().to_string());
     }
     if rule == Rule::optbreak {
@@ -83,12 +83,12 @@ pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
         Rule::v => C::Verse(pairs.next_str().to_string()),
-        Rule::k | Rule::nk => C::Character(Character {
+        Rule::k => C::Character(Character {
             ty: to_character_type(pairs.next_str()),
             contents: pairs.map_if(false, &[Rule::attrib, Rule::value, Rule::default_value], to_character_contents),
             attributes: pairs.map_if(true, &[Rule::attrib, Rule::value, Rule::default_value], to_attribute),
         }),
-        Rule::kn | Rule::nkn => {
+        Rule::kn => {
             let style = pairs.next_str();
             let num: u8 = pairs.next_value();
             C::Character(Character {
@@ -115,7 +115,7 @@ pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
 pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
     use ElementContents as C;
     let rule = pair.as_rule();
-    if rule == Rule::line || rule == Rule::text {
+    if rule == Rule::ntext || rule == Rule::text {
         return C::Line(pair.as_str().to_string());
     }
     if rule == Rule::optbreak {
@@ -132,12 +132,12 @@ pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
     }
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::k | Rule::nk => C::Character(Character {
+        Rule::k => C::Character(Character {
             ty: to_character_type(pairs.next_str()),
             contents: pairs.map_if(false, &[Rule::attrib, Rule::value, Rule::default_value], to_character_contents),
             attributes: pairs.map_if(true, &[Rule::attrib, Rule::value, Rule::default_value], to_attribute),
         }),
-        Rule::kn | Rule::nkn => {
+        Rule::kn => {
             let style = pairs.next_str();
             let num: u8 = pairs.next_value();
             C::Character(Character {
@@ -164,7 +164,7 @@ pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
 pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
     use CharacterContents as C;
     let rule = pair.as_rule();
-    if rule == Rule::line {
+    if rule == Rule::ntext {
         return C::Line(pair.as_str().to_string());
     }
     if rule == Rule::optbreak {
@@ -178,13 +178,13 @@ pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
     }
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::k | Rule::nk => C::Character(Character {
+        Rule::k => C::Character(Character {
             ty: to_character_type(pairs.next_str()),
             contents: pairs
                 .map_if(false, &[Rule::attrib, Rule::value, Rule::default_value], to_character_contents),
             attributes: pairs.map_if(true, &[Rule::attrib, Rule::value, Rule::default_value], to_attribute),
         }),
-        Rule::kn | Rule::nkn => {
+        Rule::kn => {
             let style = pairs.next_str();
             let num: u8 = pairs.next_value();
             C::Character(Character {

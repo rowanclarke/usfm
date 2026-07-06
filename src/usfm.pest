@@ -35,12 +35,10 @@ esb = { esc ~ "esb" ~ (" " | &nl) ~ esb_contents ~ esc ~ "esbe" ~ eol }
 esb_contents = _{ (cat | pn | p | qn | q | en | e | tr | em)+ }
 
 periph = { esc ~ "periph " ~ periph_contents ~ eol }
-periph_contents = _{ line ~ ("|" ~ (attrib+ | value))? }
+periph_contents = _{ ntext ~ ("|" ~ (attrib+ | value))? }
 
-k = { esc ~ PUSH(k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
-kn = { esc ~ PUSH(kn_style ~ num) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
-nk = { esc ~ PUSH("+" ~ k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
-nkn = { esc ~ PUSH("+" ~ kn_style ~ num) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+k = { esc ~ PUSH("+"? ~ k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+kn = { esc ~ PUSH("+"? ~ kn_style ~ num) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
 
 f = { esc ~ PUSH(f_style) ~ " " ~ caller ~ " " ~ f_contents ~ esc ~ POP ~ "*" }
 fe = { esc ~ PUSH(fe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
@@ -57,7 +55,7 @@ ms_style = { "qt" | "ts" | "t" | "wj" | "vid" }
 dir = { "s" | "e" }
 milestone_attribs = _{ sp* ~ "|" ~ sp* ~ attrib+ }
 
-cat = { esc ~ PUSH("cat") ~ " " ~ line ~ esc ~ POP ~ "*" }
+cat = { esc ~ PUSH("cat") ~ " " ~ ntext ~ esc ~ POP ~ "*" }
 
 optbreak = { "//" }
 
@@ -111,10 +109,10 @@ f_contents = _{ fe+ }
 x_contents = _{ xe+ }
 n_contents = _{ nested* }
 
-unnested = _{ text | kn | k | nkn | nk | f | x | fig | milestone | cat | optbreak }
-nested = _{ line | nkn | nk | fig | milestone | optbreak }
+unnested = _{ text | kn | k | f | x | fig | milestone | cat | optbreak }
+nested = _{ ntext | kn | k | fig | milestone | optbreak }
 text = { (!(nl ~ "\\" | "\\" | nl ~ EOI | "//") ~ ANY)+ }
-line = { (!(nl ~ "\\" | "\\" | "|" | nl ~ EOI | "//") ~ ANY)+ }
+ntext = { (!(nl ~ "\\" | "\\" | "|" | nl ~ EOI | "//") ~ ANY)+ }
 attrib = { sp* ~ name ~ "=\"" ~ value ~ "\"" }
 name = { ('a'..'z' | 'A'..'Z' | "-" | "_")+ }
 default_value = { (!"\\" ~ ANY)+ }
