@@ -2,10 +2,11 @@ lf = _{ "\n" | "\r" | "\n\r" }
 sp = _{ " " | "\t" }
 ws = _{ (sp | lf)* }
 nl = _{ sp* ~ lf ~ ws }
-eol = _{ nl | &EOI }
+el = _{ sp* ~ &EOI }
+eol = _{ nl | el }
 esc = _{ ws ~ "\\" }
 
-book = _{ (esb | tr | pn | p | qn | q | en | e | id | usfm_ver | ide | sts | c | ca | em | periph)+ ~ &EOI }
+book = _{ (esb | tr | pn | p | qn | q | en | e | id | usfm_ver | ide | sts | c | ca | em | periph)+ ~ el }
 
 p = { esc ~ p_style ~ (" " | &nl) ~ p_contents ~ eol }
 pn = { esc ~ pn_style ~ num ~ (" " | &nl) ~ p_contents ~ eol }
