@@ -30,30 +30,12 @@ pub fn to_book_contents(pair: Pair<Rule>) -> BookContents {
         Rule::sts => C::Status(pairs.next_value()),
         Rule::c => C::Chapter(pairs.next_value()),
         Rule::ca => C::AltChapter(pairs.next_value()),
-        Rule::p => C::Paragraph(Paragraph {
-            style: to_paragraph_style(pairs.next_str()),
-            contents: pairs.map(to_paragraph_contents),
-        }),
-        Rule::pn => C::Paragraph(Paragraph {
-            style: to_numbered_paragraph_style(pairs.next_str(), pairs.next_value()),
-            contents: pairs.map(to_paragraph_contents),
-        }),
-        Rule::q => C::Poetry(Poetry {
-            style: to_poetry_style(pairs.next_str()),
-            contents: pairs.map(to_paragraph_contents),
-        }),
-        Rule::qn => C::Poetry(Poetry {
-            style: to_numbered_poetry_style(pairs.next_str(), pairs.next_value()),
-            contents: pairs.map(to_paragraph_contents),
-        }),
-        Rule::e => C::Element(Element {
-            ty: to_element_type(pairs.next_str()),
-            contents: pairs.map(to_element_contents),
-        }),
-        Rule::en => C::Element(Element {
-            ty: to_numbered_element_type(pairs.next_str(), pairs.next_value()),
-            contents: pairs.map(to_element_contents),
-        }),
+        Rule::p => C::Paragraph(to_paragraph(pairs)),
+        Rule::pn => C::Paragraph(to_numbered_paragraph(pairs)),
+        Rule::q => C::Poetry(to_poetry(pairs)),
+        Rule::qn => C::Poetry(to_numbered_poetry(pairs)),
+        Rule::e => C::Element(to_element(pairs)),
+        Rule::en => C::Element(to_numbered_element(pairs)),
         Rule::em => C::Empty(to_empty_type(pairs.next_str())),
         Rule::tr => C::TableRow(to_table_row(pairs)),
         Rule::esb => C::Sidebar(to_sidebar(pairs)),
@@ -68,46 +50,17 @@ pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
     if rule == Rule::ntext || rule == Rule::text {
         return C::Line(pair.as_str().to_string());
     }
-    if rule == Rule::optbreak {
-        return C::OptionalBreak;
-    }
-    if rule == Rule::fig {
-        return C::Figure(to_figure(pair.into_inner().into()));
-    }
-    if rule == Rule::milestone {
-        return C::Milestone(to_milestone(pair.into_inner().into()));
-    }
-    if rule == Rule::cat {
-        return C::Category(pair.into_inner().next().unwrap().as_str().to_string());
-    }
-    let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
+    let pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::v => C::Verse(pairs.next_str().to_string()),
-        Rule::k => C::Character(Character {
-            ty: to_character_type(pairs.next_str()),
-            contents: pairs.map_if(false, &[Rule::attrib, Rule::value, Rule::default_value], to_character_contents),
-            attributes: pairs.map_if(true, &[Rule::attrib, Rule::value, Rule::default_value], to_attribute),
-        }),
-        Rule::kn => {
-            let style = pairs.next_str();
-            let num: u8 = pairs.next_value();
-            C::Character(Character {
-                ty: to_numbered_character_type(style, num),
-                contents: pairs
-                    .map_if(false, &[Rule::attrib, Rule::value, Rule::default_value], to_character_contents),
-                attributes: pairs.map_if(true, &[Rule::attrib, Rule::value, Rule::default_value], to_attribute),
-            })
-        }
-        Rule::f => C::Footnote(Footnote {
-            style: to_footnote_style(pairs.next_str()),
-            caller: to_caller(pairs.next_char()),
-            elements: pairs.map(to_footnote_element),
-        }),
-        Rule::x => C::CrossRef(CrossRef {
-            style: to_cross_ref_style(pairs.next_str()),
-            caller: to_caller(pairs.next_char()),
-            elements: pairs.map(to_cross_ref_element),
-        }),
+        Rule::optbreak => C::OptionalBreak,
+        Rule::fig => C::Figure(to_figure(pairs)),
+        Rule::milestone => C::Milestone(to_milestone(pairs)),
+        Rule::cat => C::Category(to_category(pairs)),
+        Rule::v => C::Verse(to_verse(pairs)),
+        Rule::k => C::Character(to_character(pairs)),
+        Rule::kn => C::Character(to_numbered_character(pairs)),
+        Rule::f => C::Footnote(to_footnote(pairs)),
+        Rule::x => C::CrossRef(to_cross_ref(pairs)),
         _ => panic!("Unexpected rule {:?} in to_paragraph_contents", rule),
     }
 }
@@ -118,45 +71,16 @@ pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
     if rule == Rule::ntext || rule == Rule::text {
         return C::Line(pair.as_str().to_string());
     }
-    if rule == Rule::optbreak {
-        return C::OptionalBreak;
-    }
-    if rule == Rule::fig {
-        return C::Figure(to_figure(pair.into_inner().into()));
-    }
-    if rule == Rule::milestone {
-        return C::Milestone(to_milestone(pair.into_inner().into()));
-    }
-    if rule == Rule::cat {
-        return C::Category(pair.into_inner().next().unwrap().as_str().to_string());
-    }
-    let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
+    let pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::k => C::Character(Character {
-            ty: to_character_type(pairs.next_str()),
-            contents: pairs.map_if(false, &[Rule::attrib, Rule::value, Rule::default_value], to_character_contents),
-            attributes: pairs.map_if(true, &[Rule::attrib, Rule::value, Rule::default_value], to_attribute),
-        }),
-        Rule::kn => {
-            let style = pairs.next_str();
-            let num: u8 = pairs.next_value();
-            C::Character(Character {
-                ty: to_numbered_character_type(style, num),
-                contents: pairs
-                    .map_if(false, &[Rule::attrib, Rule::value, Rule::default_value], to_character_contents),
-                attributes: pairs.map_if(true, &[Rule::attrib, Rule::value, Rule::default_value], to_attribute),
-            })
-        }
-        Rule::f => C::Footnote(Footnote {
-            style: to_footnote_style(pairs.next_str()),
-            caller: to_caller(pairs.next_char()),
-            elements: pairs.map(to_footnote_element),
-        }),
-        Rule::x => C::CrossRef(CrossRef {
-            style: to_cross_ref_style(pairs.next_str()),
-            caller: to_caller(pairs.next_char()),
-            elements: pairs.map(to_cross_ref_element),
-        }),
+        Rule::optbreak => C::OptionalBreak,
+        Rule::fig => C::Figure(to_figure(pairs)),
+        Rule::milestone => C::Milestone(to_milestone(pairs)),
+        Rule::cat => C::Category(to_category(pairs)),
+        Rule::k => C::Character(to_character(pairs)),
+        Rule::kn => C::Character(to_numbered_character(pairs)),
+        Rule::f => C::Footnote(to_footnote(pairs)),
+        Rule::x => C::CrossRef(to_cross_ref(pairs)),
         _ => panic!("Unexpected rule {:?} in to_element_contents", rule),
     }
 }
@@ -167,34 +91,132 @@ pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
     if rule == Rule::ntext {
         return C::Line(pair.as_str().to_string());
     }
-    if rule == Rule::optbreak {
-        return C::OptionalBreak;
+    let pairs: Unpack<'_, Rule> = pair.into_inner().into();
+    match rule {
+        Rule::optbreak => C::OptionalBreak,
+        Rule::fig => C::Figure(to_figure(pairs)),
+        Rule::milestone => C::Milestone(to_milestone(pairs)),
+        Rule::k => C::Character(to_character(pairs)),
+        Rule::kn => C::Character(to_numbered_character(pairs)),
+        _ => panic!("Unexpected rule {:?} in to_character_contents", rule),
     }
-    if rule == Rule::fig {
-        return C::Figure(to_figure(pair.into_inner().into()));
-    }
-    if rule == Rule::milestone {
-        return C::Milestone(to_milestone(pair.into_inner().into()));
-    }
+}
+
+pub fn to_sidebar_contents(pair: Pair<Rule>) -> SidebarContents {
+    use SidebarContents as C;
+    let rule = pair.as_rule();
     let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::k => C::Character(Character {
-            ty: to_character_type(pairs.next_str()),
-            contents: pairs
-                .map_if(false, &[Rule::attrib, Rule::value, Rule::default_value], to_character_contents),
-            attributes: pairs.map_if(true, &[Rule::attrib, Rule::value, Rule::default_value], to_attribute),
-        }),
-        Rule::kn => {
-            let style = pairs.next_str();
-            let num: u8 = pairs.next_value();
-            C::Character(Character {
-                ty: to_numbered_character_type(style, num),
-                contents: pairs
-                    .map_if(false, &[Rule::attrib, Rule::value, Rule::default_value], to_character_contents),
-                attributes: pairs.map_if(true, &[Rule::attrib, Rule::value, Rule::default_value], to_attribute),
-            })
-        }
-        _ => panic!("Unexpected rule {:?} in to_character_contents", rule),
+        Rule::p => C::Paragraph(to_paragraph(pairs)),
+        Rule::pn => C::Paragraph(to_numbered_paragraph(pairs)),
+        Rule::q => C::Poetry(to_poetry(pairs)),
+        Rule::qn => C::Poetry(to_numbered_poetry(pairs)),
+        Rule::e => C::Element(to_element(pairs)),
+        Rule::en => C::Element(to_numbered_element(pairs)),
+        Rule::em => C::Empty(to_empty_type(pairs.next_str())),
+        Rule::tr => C::TableRow(to_table_row(pairs)),
+        Rule::cat => C::Category(to_category(pairs)),
+        _ => panic!("Unexpected rule {:?} in to_sidebar_contents", rule),
+    }
+}
+
+fn to_paragraph(mut pairs: Unpack<Rule>) -> Paragraph {
+    Paragraph {
+        style: to_paragraph_style(pairs.next_str()),
+        contents: pairs.map(to_paragraph_contents),
+    }
+}
+
+fn to_numbered_paragraph(mut pairs: Unpack<Rule>) -> Paragraph {
+    Paragraph {
+        style: to_numbered_paragraph_style(pairs.next_str(), pairs.next_value_or(Rule::num, 1)),
+        contents: pairs.map(to_paragraph_contents),
+    }
+}
+
+fn to_poetry(mut pairs: Unpack<Rule>) -> Poetry {
+    Poetry {
+        style: to_poetry_style(pairs.next_str()),
+        contents: pairs.map(to_paragraph_contents),
+    }
+}
+
+fn to_numbered_poetry(mut pairs: Unpack<Rule>) -> Poetry {
+    Poetry {
+        style: to_numbered_poetry_style(pairs.next_str(), pairs.next_value_or(Rule::num, 1)),
+        contents: pairs.map(to_paragraph_contents),
+    }
+}
+
+fn to_element(mut pairs: Unpack<Rule>) -> Element {
+    Element {
+        ty: to_element_type(pairs.next_str()),
+        contents: pairs.map(to_element_contents),
+    }
+}
+
+fn to_numbered_element(mut pairs: Unpack<Rule>) -> Element {
+    Element {
+        ty: to_numbered_element_type(pairs.next_str(), pairs.next_value_or(Rule::num, 1)),
+        contents: pairs.map(to_element_contents),
+    }
+}
+
+fn to_category(mut pairs: Unpack<Rule>) -> String {
+    pairs.next_str().to_string()
+}
+
+fn to_verse(mut pairs: Unpack<Rule>) -> String {
+    pairs.next_str().to_string()
+}
+
+fn to_character(mut pairs: Unpack<Rule>) -> Character {
+    Character {
+        ty: to_character_type(pairs.next_str()),
+        contents: pairs.map_if(
+            false,
+            &[Rule::attrib, Rule::value, Rule::default_value],
+            to_character_contents,
+        ),
+        attributes: pairs.map_if(
+            true,
+            &[Rule::attrib, Rule::value, Rule::default_value],
+            to_attribute,
+        ),
+    }
+}
+
+fn to_numbered_character(mut pairs: Unpack<Rule>) -> Character {
+    let style = pairs.next_str();
+    let num: u8 = pairs.next_value_or(Rule::num, 1);
+    Character {
+        ty: to_numbered_character_type(style, num),
+        contents: pairs.map_if(
+            false,
+            &[Rule::attrib, Rule::value, Rule::default_value],
+            to_character_contents,
+        ),
+        attributes: pairs.map_if(
+            true,
+            &[Rule::attrib, Rule::value, Rule::default_value],
+            to_attribute,
+        ),
+    }
+}
+
+fn to_footnote(mut pairs: Unpack<Rule>) -> Footnote {
+    Footnote {
+        style: to_footnote_style(pairs.next_str()),
+        caller: to_caller(pairs.next_char()),
+        elements: pairs.map(to_footnote_element),
+    }
+}
+
+fn to_cross_ref(mut pairs: Unpack<Rule>) -> CrossRef {
+    CrossRef {
+        style: to_cross_ref_style(pairs.next_str()),
+        caller: to_caller(pairs.next_char()),
+        elements: pairs.map(to_cross_ref_element),
     }
 }
 
@@ -270,46 +292,19 @@ pub fn to_sidebar(pairs: Unpack<Rule>) -> Sidebar {
     }
 }
 
-pub fn to_sidebar_contents(pair: Pair<Rule>) -> SidebarContents {
-    use SidebarContents as C;
-    let rule = pair.as_rule();
-    let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
-    match rule {
-        Rule::p => C::Paragraph(Paragraph {
-            style: to_paragraph_style(pairs.next_str()),
-            contents: pairs.map(to_paragraph_contents),
-        }),
-        Rule::pn => C::Paragraph(Paragraph {
-            style: to_numbered_paragraph_style(pairs.next_str(), pairs.next_value()),
-            contents: pairs.map(to_paragraph_contents),
-        }),
-        Rule::q => C::Poetry(Poetry {
-            style: to_poetry_style(pairs.next_str()),
-            contents: pairs.map(to_paragraph_contents),
-        }),
-        Rule::qn => C::Poetry(Poetry {
-            style: to_numbered_poetry_style(pairs.next_str(), pairs.next_value()),
-            contents: pairs.map(to_paragraph_contents),
-        }),
-        Rule::e => C::Element(Element {
-            ty: to_element_type(pairs.next_str()),
-            contents: pairs.map(to_element_contents),
-        }),
-        Rule::en => C::Element(Element {
-            ty: to_numbered_element_type(pairs.next_str(), pairs.next_value()),
-            contents: pairs.map(to_element_contents),
-        }),
-        Rule::em => C::Empty(to_empty_type(pairs.next_str())),
-        Rule::tr => C::TableRow(to_table_row(pairs)),
-        Rule::cat => C::Category(pairs.next_str().to_string()),
-        _ => panic!("Unexpected rule {:?} in to_sidebar_contents", rule),
-    }
-}
 
 pub fn to_figure(pairs: Unpack<Rule>) -> Figure {
     Figure {
-        contents: pairs.map_if(false, &[Rule::attrib, Rule::value, Rule::default_value], to_character_contents),
-        attributes: pairs.map_if(true, &[Rule::attrib, Rule::value, Rule::default_value], to_attribute),
+        contents: pairs.map_if(
+            false,
+            &[Rule::attrib, Rule::value, Rule::default_value],
+            to_character_contents,
+        ),
+        attributes: pairs.map_if(
+            true,
+            &[Rule::attrib, Rule::value, Rule::default_value],
+            to_attribute,
+        ),
     }
 }
 
@@ -550,10 +545,7 @@ pub fn to_numbered_character_type(s: &str, n: u8) -> CharacterType {
     use CharacterType::*;
     match s {
         "liv" => ListValue(n),
-        _ => panic!(
-            "Unknown numbered character type: {:?} with number {}",
-            s, n
-        ),
+        _ => panic!("Unknown numbered character type: {:?} with number {}", s, n),
     }
 }
 

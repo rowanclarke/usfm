@@ -30,6 +30,14 @@ impl<'i, R: RuleType> Unpack<'i, R> {
         self.next_str().parse().unwrap_or_else(|_| panic!())
     }
 
+    pub fn next_value_or<T: FromStr>(&mut self, rule: R, default: T) -> T {
+        if self.0.peek().map(|p| p.as_rule()) == Some(rule) {
+            self.next_value()
+        } else {
+            default
+        }
+    }
+
     pub fn next_char(&mut self) -> char {
         self.next_str().chars().next().unwrap()
     }

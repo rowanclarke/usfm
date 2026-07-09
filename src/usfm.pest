@@ -9,12 +9,12 @@ esc = _{ ws ~ "\\" }
 book = _{ (esb | tr | pn | p | qn | q | en | e | id | usfm_ver | ide | sts | c | ca | em | periph)+ ~ el }
 
 p = { esc ~ p_style ~ (" " | &nl) ~ p_contents ~ eol }
-pn = { esc ~ pn_style ~ num ~ (" " | &nl) ~ p_contents ~ eol }
+pn = { esc ~ pn_style ~ num? ~ (" " | &nl) ~ p_contents ~ eol }
 q = { esc ~ q_style ~ (" " | &nl) ~ p_contents ~ eol }
-qn = { esc ~ qn_style ~ num ~ (" " | &nl) ~ p_contents ~ eol }
+qn = { esc ~ qn_style ~ num? ~ (" " | &nl) ~ p_contents ~ eol }
 
 e = { esc ~ e_type ~ (" " ~ e_contents)? ~ eol }
-en = { esc ~ en_type ~ num ~ (" " ~ e_contents)? ~ eol }
+en = { esc ~ en_type ~ num? ~ (" " ~ e_contents)? ~ eol }
 id = { esc ~ "id " ~ code ~ (" " ~ e_contents)? ~ eol }
 usfm_ver = { esc ~ "usfm " ~ version ~ eol }
 ide = { esc ~ "ide " ~ encoding ~ eol }
@@ -39,7 +39,7 @@ periph = { esc ~ "periph " ~ periph_contents ~ eol }
 periph_contents = _{ ntext ~ ("|" ~ (attrib+ | value))? }
 
 k = { esc ~ PUSH("+"? ~ k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
-kn = { esc ~ PUSH("+"? ~ kn_style ~ num) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+kn = { esc ~ PUSH("+"? ~ kn_style ~ num?) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
 
 f = { esc ~ PUSH(f_style) ~ " " ~ caller ~ " " ~ f_contents ~ esc ~ POP ~ "*" }
 fe = { esc ~ PUSH(fe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }

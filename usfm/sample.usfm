@@ -35,6 +35,7 @@
 \mr 1:1--2:25
 \s1 The Beginning
 \s2 Day One
+\s Default Section
 \sr 1:1-5
 \r (Psalm 104:1-35; John 1:1-5)
 \d A Psalm of David.
@@ -77,12 +78,15 @@
 \v 16 First indented paragraph content.
 \pi2
 \v 17 Second indented paragraph content.
+\pi
+\v 17a Default indented paragraph content.
 \ph1
 \v 18 Hanging indent paragraph content.
 \b
 \q1
 \v 19 Poetry line one,
 \q2 indented poetry line two.
+\q default poetry line.
 \qm1 embedded poetry line.
 \qa Acrostic Heading (Aleph)
 \qc Centered poetry line.
@@ -97,7 +101,7 @@
 \li2 Second level list item.
 \lim1 Embedded list item.
 \lf List footer
-\li1 Third item with \liv1 value\liv1*.
+\li1 Third item with \liv1 value\liv1* and \liv default value\liv*.
 \tr \th1 Column 1 \th2 Column 2
 \tr \thr1 Right Header \thc1 Center Header
 \tr \tc1 Cell 1 \tc2 Cell 2
