@@ -66,7 +66,6 @@ pub enum CharacterContents {
     OptionalBreak,
 }
 
-
 #[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
 #[rkyv(derive(Debug, PartialEq, Eq, Hash))]
 pub struct Paragraph {
@@ -216,24 +215,19 @@ pub struct Milestone {
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
 #[rkyv(derive(Debug, PartialEq, Eq, Clone, Hash))]
 pub enum MilestoneStyle {
-    QuotedText(u8, MilestoneDir),
-    QuotedTextStart,
-    QuotedTextEnd,
-    TextSection(MilestoneDir),
-    Text(MilestoneDir),
-    WordsOfJesus(MilestoneDir),
+    QuotedText(u8, MilestoneBound),
+    TextSection(MilestoneBound),
+    Text(MilestoneBound),
+    WordsOfJesus(MilestoneBound),
     VerseId,
-    QuotedTextPlain,
-    TextSectionPlain,
-    TextPlain,
-    WordsOfJesusPlain,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
 #[rkyv(derive(Debug, PartialEq, Eq, Clone, Hash))]
-pub enum MilestoneDir {
+pub enum MilestoneBound {
     Start,
     End,
+    None,
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]

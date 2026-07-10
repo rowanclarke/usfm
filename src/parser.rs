@@ -54,7 +54,8 @@ pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
     match rule {
         Rule::optbreak => C::OptionalBreak,
         Rule::fig => C::Figure(to_figure(pairs)),
-        Rule::milestone => C::Milestone(to_milestone(pairs)),
+        Rule::ms => C::Milestone(to_milestone(pairs)),
+        Rule::mn => C::Milestone(to_numbered_milestone(pairs)),
         Rule::cat => C::Category(to_category(pairs)),
         Rule::v => C::Verse(to_verse(pairs)),
         Rule::k => C::Character(to_character(pairs)),
@@ -75,7 +76,8 @@ pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
     match rule {
         Rule::optbreak => C::OptionalBreak,
         Rule::fig => C::Figure(to_figure(pairs)),
-        Rule::milestone => C::Milestone(to_milestone(pairs)),
+        Rule::ms => C::Milestone(to_milestone(pairs)),
+        Rule::mn => C::Milestone(to_numbered_milestone(pairs)),
         Rule::cat => C::Category(to_category(pairs)),
         Rule::k => C::Character(to_character(pairs)),
         Rule::kn => C::Character(to_numbered_character(pairs)),
@@ -95,7 +97,8 @@ pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
     match rule {
         Rule::optbreak => C::OptionalBreak,
         Rule::fig => C::Figure(to_figure(pairs)),
-        Rule::milestone => C::Milestone(to_milestone(pairs)),
+        Rule::ms => C::Milestone(to_milestone(pairs)),
+        Rule::mn => C::Milestone(to_numbered_milestone(pairs)),
         Rule::k => C::Character(to_character(pairs)),
         Rule::kn => C::Character(to_numbered_character(pairs)),
         _ => panic!("Unexpected rule {:?} in to_character_contents", rule),
@@ -160,14 +163,6 @@ fn to_numbered_element(mut pairs: Unpack<Rule>) -> Element {
         ty: to_numbered_element_type(pairs.next_str(), pairs.next_value_or(Rule::num, 1)),
         contents: pairs.map(to_element_contents),
     }
-}
-
-fn to_category(mut pairs: Unpack<Rule>) -> String {
-    pairs.next_str().to_string()
-}
-
-fn to_verse(mut pairs: Unpack<Rule>) -> String {
-    pairs.next_str().to_string()
 }
 
 fn to_character(mut pairs: Unpack<Rule>) -> Character {
@@ -236,6 +231,14 @@ pub fn to_cross_ref_element(pair: Pair<Rule>) -> CrossRefElement {
     }
 }
 
+fn to_verse(mut pairs: Unpack<Rule>) -> String {
+    pairs.next_str().to_string()
+}
+
+fn to_category(mut pairs: Unpack<Rule>) -> String {
+    pairs.next_str().to_string()
+}
+
 pub fn to_attribute(pair: Pair<Rule>) -> (String, String) {
     if pair.as_rule() == Rule::attrib {
         let mut pairs: Unpack<'_, Rule> = pair.into_inner().into();
@@ -273,25 +276,11 @@ pub fn to_table_cell(pair: Pair<Rule>) -> TableCell {
     }
 }
 
-pub fn to_cell_prefix(s: &str) -> CellPrefix {
-    use CellPrefix::*;
-    match s {
-        "th" => Header,
-        "thr" => HeaderRight,
-        "thc" => HeaderCenter,
-        "tc" => Content,
-        "tcr" => ContentRight,
-        "tcc" => ContentCenter,
-        _ => panic!("Unknown cell prefix: {:?}", s),
-    }
-}
-
 pub fn to_sidebar(pairs: Unpack<Rule>) -> Sidebar {
     Sidebar {
         contents: pairs.map(to_sidebar_contents),
     }
 }
-
 
 pub fn to_figure(pairs: Unpack<Rule>) -> Figure {
     Figure {
@@ -309,61 +298,28 @@ pub fn to_figure(pairs: Unpack<Rule>) -> Figure {
 }
 
 pub fn to_milestone(mut pairs: Unpack<Rule>) -> Milestone {
-    let first = pairs.next().unwrap();
-    let rule = first.as_rule();
-    let mut attribs = Vec::new();
-    for pair in pairs.0 {
-        if pair.as_rule() == Rule::attrib {
-            attribs.push(to_attribute(pair));
-        }
-    }
-    match rule {
-        Rule::mn => {
-            let mut inner: Unpack<'_, Rule> = first.into_inner().into();
-            let _style = inner.next_str(); // "qt"
-            let num: u8 = inner.next_value();
-            let dir = to_milestone_dir(inner.next_str());
-            Milestone {
-                style: MilestoneStyle::QuotedText(num, dir),
-                attributes: attribs,
-            }
-        }
-        Rule::ms => {
-            let mut inner: Unpack<'_, Rule> = first.into_inner().into();
-            let style_str = inner.next_str();
-            let dir_str = inner.next_str_opt();
-            let style = match (style_str, dir_str) {
-                ("qt", Some(d)) => match to_milestone_dir(d) {
-                    MilestoneDir::Start => MilestoneStyle::QuotedTextStart,
-                    MilestoneDir::End => MilestoneStyle::QuotedTextEnd,
-                },
-                ("qt", None) => MilestoneStyle::QuotedTextPlain,
-                ("ts", Some(d)) => MilestoneStyle::TextSection(to_milestone_dir(d)),
-                ("ts", None) => MilestoneStyle::TextSectionPlain,
-                ("t", Some(d)) => MilestoneStyle::Text(to_milestone_dir(d)),
-                ("t", None) => MilestoneStyle::TextPlain,
-                ("wj", Some(d)) => MilestoneStyle::WordsOfJesus(to_milestone_dir(d)),
-                ("wj", None) => MilestoneStyle::WordsOfJesusPlain,
-                ("vid", None) => MilestoneStyle::VerseId,
-                _ => panic!(
-                    "Unknown milestone style: {:?} with dir {:?}",
-                    style_str, dir_str
-                ),
-            };
-            Milestone {
-                style,
-                attributes: attribs,
-            }
-        }
-        _ => panic!("Unexpected rule {:?} in to_milestone", rule),
+    Milestone {
+        style: to_milestone_style(pairs.next_str(), pairs.next_str_opt()),
+        attributes: pairs.map_if(
+            true,
+            &[Rule::attrib, Rule::value, Rule::default_value],
+            to_attribute,
+        ),
     }
 }
 
-pub fn to_milestone_dir(s: &str) -> MilestoneDir {
-    match s {
-        "s" => MilestoneDir::Start,
-        "e" => MilestoneDir::End,
-        _ => panic!("Unknown milestone direction: {:?}", s),
+pub fn to_numbered_milestone(mut pairs: Unpack<Rule>) -> Milestone {
+    Milestone {
+        style: to_numbered_milestone_style(
+            pairs.next_str(),
+            pairs.next_value(),
+            pairs.next_str_opt(),
+        ),
+        attributes: pairs.map_if(
+            true,
+            &[Rule::attrib, Rule::value, Rule::default_value],
+            to_attribute,
+        ),
     }
 }
 
@@ -609,6 +565,58 @@ pub fn to_caller(c: char) -> Caller {
         '+' => Auto,
         '-' => None,
         _ => Some(c),
+    }
+}
+
+pub fn to_numbered_milestone_style(s: &str, n: u8, b: Option<&str>) -> MilestoneStyle {
+    use MilestoneStyle::*;
+    let bound = to_milestone_bound(b);
+    match (s, b) {
+        ("qt", _) => QuotedText(n, bound),
+        _ => panic!(
+            "Unknown numbered milestone style: {:?}",
+            b.map(|b| format!("{}-{}", s, b))
+                .unwrap_or(format!("{}", s))
+        ),
+    }
+}
+
+pub fn to_milestone_style(s: &str, b: Option<&str>) -> MilestoneStyle {
+    use MilestoneStyle::*;
+    let bound = to_milestone_bound(b);
+    match (s, b) {
+        ("qt", _) => QuotedText(1, bound),
+        ("ts", _) => TextSection(bound),
+        ("t", _) => Text(bound),
+        ("wj", _) => WordsOfJesus(bound),
+        ("vid", None) => VerseId,
+        _ => panic!(
+            "Unknown milestone style: {:?}",
+            b.map(|b| format!("{}-{}", s, b))
+                .unwrap_or(format!("{}", s))
+        ),
+    }
+}
+
+pub fn to_milestone_bound(s: Option<&str>) -> MilestoneBound {
+    match s {
+        Some("s") => MilestoneBound::Start,
+        Some("e") => MilestoneBound::End,
+        None => MilestoneBound::None,
+        Some(s) => panic!("Unknown milestone direction: {:?}", s),
+    }
+}
+
+pub fn to_cell_prefix(s: &str) -> CellPrefix {
+    use CellPrefix::*;
+    match s {
+        "th" => Header,
+        "thr" => HeaderRight,
+        "thc" => HeaderCenter,
+        "tc" => Content,
+        "tcr" => ContentRight,
+        "tcc" => ContentCenter,
+        _ => panic!("Unknown cell prefix: {:?}", s),
     }
 }
 

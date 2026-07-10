@@ -1,62 +1,57 @@
 lf = _{ "\n" | "\r" | "\n\r" }
 sp = _{ " " | "\t" }
-ws = _{ (sp | lf)* }
-nl = _{ sp* ~ lf ~ ws }
+ws = _{ sp+ }
+ls = _{ (sp | lf)* }
+nl = _{ sp* ~ lf ~ ls }
 el = _{ sp* ~ &EOI }
 eol = _{ nl | el }
-esc = _{ ws ~ "\\" }
+esc = _{ ls ~ "\\" }
 
 book = _{ (esb | tr | pn | p | qn | q | en | e | id | usfm_ver | ide | sts | c | ca | em | periph)+ ~ el }
 
-p = { esc ~ p_style ~ (" " | &nl) ~ p_contents ~ eol }
-pn = { esc ~ pn_style ~ num? ~ (" " | &nl) ~ p_contents ~ eol }
-q = { esc ~ q_style ~ (" " | &nl) ~ p_contents ~ eol }
-qn = { esc ~ qn_style ~ num? ~ (" " | &nl) ~ p_contents ~ eol }
+p = { esc ~ p_style ~ (ws | &nl) ~ p_contents ~ eol }
+pn = { esc ~ pn_style ~ num? ~ (ws | &nl) ~ p_contents ~ eol }
+q = { esc ~ q_style ~ (ws | &nl) ~ p_contents ~ eol }
+qn = { esc ~ qn_style ~ num? ~ (ws | &nl) ~ p_contents ~ eol }
 
-e = { esc ~ e_type ~ (" " ~ e_contents)? ~ eol }
-en = { esc ~ en_type ~ num? ~ (" " ~ e_contents)? ~ eol }
-id = { esc ~ "id " ~ code ~ (" " ~ e_contents)? ~ eol }
-usfm_ver = { esc ~ "usfm " ~ version ~ eol }
-ide = { esc ~ "ide " ~ encoding ~ eol }
-sts = { esc ~ "sts " ~ num ~ eol }
-c = { esc ~ "c " ~ num ~ eol }
-ca = { esc ~ PUSH("ca") ~ " " ~ num ~ esc ~ POP ~ "*" }
+e = { esc ~ e_type ~ (ws ~ e_contents)? ~ eol }
+en = { esc ~ en_type ~ num? ~ (ws ~ e_contents)? ~ eol }
+id = { esc ~ "id" ~ ws ~ code ~ (ws ~ e_contents)? ~ eol }
+usfm_ver = { esc ~ "usfm" ~ ws ~ version ~ eol }
+ide = { esc ~ "ide" ~ ws ~ encoding ~ eol }
+sts = { esc ~ "sts" ~ ws ~ num ~ eol }
+c = { esc ~ "c" ~ ws ~ num }
+ca = { esc ~ PUSH("ca") ~ ws ~ num ~ esc ~ POP ~ "*" }
 em = { esc ~ em_type ~ eol }
 
-v = { esc ~ "v " ~ verse_num ~ " " }
+v = { esc ~ "v" ~ ws ~ verse_num ~ ws }
 verse_num = { ('0'..'9' | 'a'..'z' | 'A'..'Z' | "-" | "\u{200F}" | "\u{200E}" | "\u{200B}" | "\u{200C}" | "\u{200D}" | "\u{2068}" | "\u{2069}" | "\u{FEFF}" | "\u{061C}")+ }
 
-tr = { esc ~ "tr" ~ (" " | &nl) ~ tr_contents ~ eol }
+tr = { esc ~ "tr" ~ (ws | &nl) ~ tr_contents ~ eol }
 tr_contents = _{ (cell | v | unnested)+ }
-cell = { esc ~ cell_prefix ~ num ~ " " ~ cell_contents }
-cell_prefix = { "thr" | "thc" | "th" | "tcr" | "tcc" | "tc" }
+cell = { esc ~ cell_prefix ~ num ~ ws ~ cell_contents }
 cell_contents = _{ unnested* }
 
-esb = { esc ~ "esb" ~ (" " | &nl) ~ esb_contents ~ esc ~ "esbe" ~ eol }
+esb = { esc ~ "esb" ~ (ws | &nl) ~ esb_contents ~ esc ~ "esbe" ~ eol }
 esb_contents = _{ (cat | pn | p | qn | q | en | e | tr | em)+ }
 
-periph = { esc ~ "periph " ~ periph_contents ~ eol }
-periph_contents = _{ ntext ~ ("|" ~ (attrib+ | value))? }
+periph = { esc ~ "periph" ~ ws ~ periph_contents ~ eol }
+periph_contents = _{ ntext ~ attribs? }
 
-k = { esc ~ PUSH("+"? ~ k_style) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
-kn = { esc ~ PUSH("+"? ~ kn_style ~ num?) ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+k = { esc ~ PUSH("+"? ~ k_style) ~ ws ~ k_contents ~ esc ~ POP ~ "*" }
+kn = { esc ~ PUSH("+"? ~ kn_style ~ num?) ~ ws ~ k_contents ~ esc ~ POP ~ "*" }
 
-f = { esc ~ PUSH(f_style) ~ " " ~ caller ~ " " ~ f_contents ~ esc ~ POP ~ "*" }
-fe = { esc ~ PUSH(fe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
-x = { esc ~ PUSH(x_style) ~ " " ~ caller ~ " " ~ x_contents ~ esc ~ POP ~ "*" }
-xe = { esc ~ PUSH(xe_style) ~ " " ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
+f = { esc ~ PUSH(f_style) ~ ws ~ caller ~ ws ~ f_contents ~ esc ~ POP ~ "*" }
+fe = { esc ~ PUSH(fe_style) ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
+x = { esc ~ PUSH(x_style) ~ ws ~ caller ~ ws ~ x_contents ~ esc ~ POP ~ "*" }
+xe = { esc ~ PUSH(xe_style) ~ ws ~ n_contents ~ (esc ~ PEEK ~ "*")? ~ DROP }
 
-fig = { esc ~ PUSH("fig") ~ " " ~ k_contents ~ esc ~ POP ~ "*" }
+fig = { esc ~ PUSH("fig") ~ ws ~ k_contents ~ esc ~ POP ~ "*" }
 
-milestone = { esc ~ (mn | ms) ~ milestone_attribs? ~ esc ~ "*" }
-mn = { mn_style ~ num ~ "-" ~ dir }
-ms = { ms_style ~ ("-" ~ dir)? }
-mn_style = { "qt" }
-ms_style = { "qt" | "ts" | "t" | "wj" | "vid" }
-dir = { "s" | "e" }
-milestone_attribs = _{ sp* ~ "|" ~ sp* ~ attrib+ }
+mn = { esc ~ mn_style ~ num ~ "-" ~ dir ~ (ws ~ attribs)? ~ esc ~ "*" }
+ms = { esc ~ ms_style ~ ("-" ~ dir)? ~ (ws ~ attribs)? ~ esc ~ "*" }
 
-cat = { esc ~ PUSH("cat") ~ " " ~ ntext ~ esc ~ POP ~ "*" }
+cat = { esc ~ PUSH("cat") ~ ws ~ ntext ~ esc ~ POP ~ "*" }
 
 optbreak = { "//" }
 
@@ -103,17 +98,24 @@ fe_style = { "fdc" | "fk" | "fl" | "fp" | "fqa" | "fq" | "fr" | "ft" | "fv" | "f
 x_style = { "ex" | "x" }
 xe_style = { "rq" | "xdc" | "xk" | "xnt" | "xop" | "xot" | "xo" | "xq" | "xta" | "xt" }
 
+mn_style = { "qt" }
+ms_style = { "qt" | "ts" | "t" | "wj" | "vid" }
+dir = { "s" | "e" }
+
+cell_prefix = { "thr" | "thc" | "th" | "tcr" | "tcc" | "tc" }
+
 p_contents = _{ (nl ~ v | unnested)+ }
 e_contents = _{ unnested+ }
-k_contents = _{ ws ~ nested* ~ ("|" ~ (attrib+ | default_value))? }
+k_contents = _{ nested* ~ attribs? }
 f_contents = _{ fe+ }
 x_contents = _{ xe+ }
 n_contents = _{ nested* }
 
-unnested = _{ text | kn | k | f | x | fig | milestone | cat | optbreak }
-nested = _{ ntext | kn | k | fig | milestone | optbreak }
+unnested = _{ text | kn | k | f | x | fig | ms | mn | cat | optbreak }
+nested = _{ ntext | kn | k | fig | ms | mn | optbreak }
 text = { (!(nl ~ "\\" | "\\" | nl ~ EOI | "//") ~ ANY)+ }
 ntext = { (!(nl ~ "\\" | "\\" | "|" | nl ~ EOI | "//") ~ ANY)+ }
+attribs = _{ ("|" ~ (attrib+ | default_value)) }
 attrib = { sp* ~ name ~ "=\"" ~ value ~ "\"" }
 name = { ('a'..'z' | 'A'..'Z' | "-" | "_")+ }
 default_value = { (!"\\" ~ ANY)+ }
@@ -121,5 +123,5 @@ value = { (!"\"" ~ ANY)* }
 code = { ('A'..'Z' | '0'..'9')+ }
 encoding = { "CP-1252" | "CP-1251" | "UTF-8" | "UTF-16" }
 version = { num ~ ("." ~ num)* }
-caller = { "+" | "-" | "?" | ('a'..'z') | ('A'..'Z') | ('0'..'9') | "*" | (!" " ~ !"\\" ~ ANY) }
+caller = { "+" | "-" | "?" | ('a'..'z') | ('A'..'Z') | ('0'..'9') | "*" | (!sp ~ !"\\" ~ ANY) }
 num = { ('0'..'9')+ }

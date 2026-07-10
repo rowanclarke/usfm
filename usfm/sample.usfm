@@ -43,8 +43,7 @@
 \sd1
 \cp I
 \cd A description of the chapter contents.
-\c 1
-\ca 2\ca*
+\c  1 \ca 2\ca*
 \p
 \v 1 \va 2\va*\vp A\vp* In the beginning, God\f + \fr 1:1 \fk God \ft The Hebrew word rendered "God" is Elohim.\fl a \fq In the beginning \fqa Or: When God began to create \fdc Deutero text \fp A footnote paragraph. \fw Witness text \fv 1\fv*\f* created the heavens and the earth.\x + \xo 1:1 \xt Psalm 104:1; John 1:1 \xk creation \xq In the beginning \xot Gen 2:4 \xnt John 1:1 \xdc Sir 1:1 \xta (added) \xop 1:1a \rq Ps 104:1\rq*\x*
 \v 2 The earth was \add formless\add* and \bk empty\bk*. \nd God\nd*'s \wj words of Jesus\wj* were \bd bold\bd* and \it italic\it* and \bdit bold italic\bdit* and \sc small caps\sc* and \sup superscript\sup* text.
