@@ -53,7 +53,7 @@ ms = { esc ~ ms_style ~ ("-" ~ dir)? ~ (ws ~ attribs)? ~ esc ~ "*" }
 
 cat = { esc ~ PUSH("cat") ~ ws ~ ntext ~ esc ~ POP ~ "*" }
 
-optbreak = { "//" }
+br = { "//" }
 
 p_style = {
     "cls" | "lit" | "mi" | "m" | "nb" | "pc" | "pmc" | "pmo" | "pmr" | "pm"
@@ -111,8 +111,8 @@ f_contents = _{ fe+ }
 x_contents = _{ xe+ }
 n_contents = _{ nested* }
 
-unnested = _{ text | kn | k | f | x | fig | ms | mn | cat | optbreak }
-nested = _{ ntext | kn | k | fig | ms | mn | optbreak }
+unnested = _{ text | kn | k | f | x | fig | ms | mn | cat | br }
+nested = _{ ntext | kn | k | f | x | fig | ms | mn | br }
 text = { (!(nl ~ "\\" | "\\" | nl ~ EOI | "//") ~ ANY)+ }
 ntext = { (!(nl ~ "\\" | "\\" | "|" | nl ~ EOI | "//") ~ ANY)+ }
 attribs = _{ ("|" ~ (attrib+ | default_value)) }

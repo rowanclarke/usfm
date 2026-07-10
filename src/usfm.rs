@@ -61,6 +61,8 @@ pub enum ElementContents {
 pub enum CharacterContents {
     Line(String),
     Character(Character),
+    Footnote(Footnote),
+    CrossRef(CrossRef),
     Figure(Figure),
     Milestone(Milestone),
     OptionalBreak,

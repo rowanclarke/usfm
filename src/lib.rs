@@ -19,7 +19,7 @@ pub fn parse(input: &str) -> Result<Book, String> {
             Rule::ms => "milestone (\\style\\*)".into(),
             Rule::mn => "numbered milestone (\\style\\*)".into(),
             Rule::cat => "category (\\cat ...\\cat*)".into(),
-            Rule::optbreak => "optional break (//)".into(),
+            Rule::br => "optional break (//)".into(),
             Rule::k_style => "character style name".into(),
             Rule::kn_style => "numbered character style name".into(),
             Rule::mn_style => "numbered milestone style name".into(),

@@ -52,7 +52,7 @@ pub fn to_paragraph_contents(pair: Pair<Rule>) -> ParagraphContents {
     }
     let pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::optbreak => C::OptionalBreak,
+        Rule::br => C::OptionalBreak,
         Rule::fig => C::Figure(to_figure(pairs)),
         Rule::ms => C::Milestone(to_milestone(pairs)),
         Rule::mn => C::Milestone(to_numbered_milestone(pairs)),
@@ -74,7 +74,7 @@ pub fn to_element_contents(pair: Pair<Rule>) -> ElementContents {
     }
     let pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::optbreak => C::OptionalBreak,
+        Rule::br => C::OptionalBreak,
         Rule::fig => C::Figure(to_figure(pairs)),
         Rule::ms => C::Milestone(to_milestone(pairs)),
         Rule::mn => C::Milestone(to_numbered_milestone(pairs)),
@@ -95,12 +95,14 @@ pub fn to_character_contents(pair: Pair<Rule>) -> CharacterContents {
     }
     let pairs: Unpack<'_, Rule> = pair.into_inner().into();
     match rule {
-        Rule::optbreak => C::OptionalBreak,
+        Rule::br => C::OptionalBreak,
         Rule::fig => C::Figure(to_figure(pairs)),
         Rule::ms => C::Milestone(to_milestone(pairs)),
         Rule::mn => C::Milestone(to_numbered_milestone(pairs)),
         Rule::k => C::Character(to_character(pairs)),
         Rule::kn => C::Character(to_numbered_character(pairs)),
+        Rule::f => C::Footnote(to_footnote(pairs)),
+        Rule::x => C::CrossRef(to_cross_ref(pairs)),
         _ => panic!("Unexpected rule {:?} in to_character_contents", rule),
     }
 }
