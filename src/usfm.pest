@@ -29,7 +29,7 @@ verse_num = { ('0'..'9' | 'a'..'z' | 'A'..'Z' | "-" | "\u{200F}" | "\u{200E}" | 
 
 tr = { esc ~ "tr" ~ (ws | &nl) ~ tr_contents ~ eol }
 tr_contents = _{ (cell | v | unnested)+ }
-cell = { esc ~ cell_prefix ~ num ~ ws ~ cell_contents }
+cell = { esc ~ cell_prefix ~ num ~ (ws | &nl) ~ cell_contents }
 cell_contents = _{ unnested* }
 
 esb = { esc ~ "esb" ~ (ws | &nl) ~ esb_contents ~ esc ~ "esbe" ~ eol }
