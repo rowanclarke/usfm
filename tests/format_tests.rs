@@ -1,5 +1,5 @@
 use std::fs::read_to_string;
-use usfm::{parse, format};
+use usfm::{format, parse};
 
 #[test]
 fn test_roundtrip_sample() {
@@ -140,8 +140,12 @@ fn test_format_chapter_verse() {
 #[test]
 fn test_format_table() {
     let input = r#"\id GEN
-\tr \th1 Header 1 \th2 Header 2
-\tr \tc1 Cell 1 \tc2 Cell 2
+\tr
+\th1 Header 1
+\th2 Header 2
+\tr
+\tc1 Cell 1
+\tc2 Cell 2
 "#;
     let book = parse(input).expect("Failed to parse");
     let formatted = format(&book);

@@ -101,10 +101,18 @@
 \lim1 Embedded list item.
 \lf List footer
 \li1 Third item with \liv1 value\liv1* and \liv default value\liv*.
-\tr \th1 Column 1 \th2 Column 2
-\tr \thr1 Right Header \thc1 Center Header
-\tr \tc1 Cell 1 \tc2 Cell 2
-\tr \tcr1 Right Cell \tcc1 Center Cell
+\tr
+\th1 Column 1
+\th2 Column 2
+\tr
+\thr1 Right Header
+\thc1 Center Header
+\tr
+\tc1 Cell 1
+\tc2 Cell 2
+\tr
+\tcr1 Right Cell
+\tcc1 Center Cell
 \p
 \v 22 And God blessed them.\fig A dove over the waters|src="creation.jpg" size="col" ref="1.22"\fig*
 \esb \cat History\cat*

@@ -1,6 +1,6 @@
 [package]
 name = "usfm"
-version = "0.2.7"
+version = "0.2.8"
 authors = ["Rowan Clarke <36474636+rowanclarke@users.noreply.github.com>"]
 license = "MIT"
 description = "Unified Standard Format Markers (USFM) parser with zero-copy derserialization."

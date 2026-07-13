@@ -559,7 +559,7 @@ fn format_table_row(tr: &TableRow) -> String {
     for cell in &tr.cells {
         let prefix = cell_prefix_to_str(&cell.prefix);
         let contents = format_paragraph_contents(&cell.contents);
-        result.push_str(&format!("\\{}{} {}", prefix, cell.column, contents));
+        result.push_str(&format!("\n\\{}{} {}", prefix, cell.column, contents));
     }
 
     result.push('\n');
