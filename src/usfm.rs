@@ -267,7 +267,6 @@ pub enum FootnoteElementStyle {
 #[derive(Debug, PartialEq, Eq, Clone, Hash, Archive, Serialize, Deserialize)]
 #[rkyv(derive(Debug, PartialEq, Eq, Clone, Hash))]
 pub enum CrossRefElementStyle {
-    Reference,
     Keyword,
     Quote,
     Target,
