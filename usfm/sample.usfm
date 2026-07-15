@@ -21,6 +21,7 @@
 \ipr This is a right-aligned introduction paragraph.
 \ipc This is a centered introduction paragraph.
 \ib
+\fig |src="example.jpg" size="col" ref="1.0" \fig*  
 \iot Outline of Contents
 \io1 Creation of the world \ior 1:1-2:3\ior*
 \io1 The Garden of Eden \ior 2:4-25\ior*

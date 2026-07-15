@@ -35,6 +35,7 @@ fn format_book_contents(content: &BookContents) -> String {
         TableRow(tr) => format_table_row(tr),
         Sidebar(sb) => format_sidebar(sb),
         Peripheral(text) => format!("\\periph {}\n", text),
+        Figure(fig) => format_figure(fig),
     }
 }
 

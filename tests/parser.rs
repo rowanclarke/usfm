@@ -70,15 +70,12 @@ fn rkyv_web_genesis() {
 fn parse_webpb_genesis() {
     let file = PathBuf::from(MANIFEST_DIR).join("usfm/02-GENengwebpb.usfm");
     let input = read_to_string(file).unwrap();
-
-    let book = parse(&input).unwrap();
-    println!("{:?}", book.contents);
+    parse(&input).unwrap();
 }
 
 #[test]
 fn parse_sample() {
     let file = PathBuf::from(MANIFEST_DIR).join("usfm/sample.usfm");
     let input = read_to_string(file).unwrap();
-    let book = parse(&input).unwrap();
-    println!("{:?}", book.contents);
+    parse(&input).inspect_err(|e| println!("{}", e)).unwrap();
 }

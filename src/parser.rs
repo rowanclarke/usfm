@@ -80,6 +80,7 @@ pub fn to_book_contents(pair: Pair<Rule>) -> BookContents {
         Rule::tr => C::TableRow(to_table_row(pairs)),
         Rule::esb => C::Sidebar(to_sidebar(pairs)),
         Rule::periph => C::Peripheral(pairs.next_str().to_string()),
+        Rule::fig => C::Figure(to_figure(pairs)),
         _ => panic!("Unexpected rule {:?} in to_book_contents", rule),
     }
 }

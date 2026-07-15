@@ -7,7 +7,7 @@ el = _{ sp* ~ &EOI }
 eol = _{ nl | el }
 esc = _{ ls ~ "\\" }
 
-book = _{ (esb | tr | pn | p | qn | q | en | e | id | usfm_ver | ide | sts | c | ca | em | periph)+ ~ el }
+book = _{ (esb | tr | pn | p | qn | q | en | e | id | usfm_ver | ide | sts | c | ca | em | periph | fig)+ ~ el }
 
 p = { esc ~ p_style ~ (ws | &nl) ~ p_contents ~ eol }
 pn = { esc ~ pn_style ~ num? ~ (ws | &nl) ~ p_contents ~ eol }

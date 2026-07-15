@@ -27,6 +27,7 @@ pub enum BookContents {
     TableRow(TableRow),
     Sidebar(Sidebar),
     Peripheral(String),
+    Figure(Figure),
 }
 
 #[derive(Debug, PartialEq, Eq, Hash, Archive, Serialize, Deserialize)]
