@@ -20,7 +20,7 @@ id = { esc ~ "id" ~ ws ~ code ~ (ws ~ e_contents)? ~ eol }
 usfm_ver = { esc ~ "usfm" ~ ws ~ version ~ eol }
 ide = { esc ~ "ide" ~ ws ~ encoding ~ eol }
 sts = { esc ~ "sts" ~ ws ~ num ~ eol }
-c = { esc ~ "c" ~ ws ~ num }
+c = { esc ~ "c" ~ ws ~ num ~ eol? }
 ca = { esc ~ PUSH("ca") ~ ws ~ num ~ esc ~ POP ~ "*" }
 em = { esc ~ em_type ~ eol }
 
